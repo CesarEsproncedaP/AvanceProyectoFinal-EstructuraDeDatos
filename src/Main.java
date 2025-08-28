@@ -19,15 +19,12 @@ public class Main {
         instructor Sofia = new instructor("Sofía Cruz", "Zumba");
         instructor Ximena = new instructor("Ximena Cavazos", "Jumpling");
 
-
         // Inicializar Clases Programadas (Cola)
         clasesEnEspera.add(new ClaseProgramada("Zumba", Sofia, "10:00 AM - 11:30 AM"));
         clasesEnEspera.add(new ClaseProgramada("Yoga", Ana, "12:00 AM - 1:30 PM"));
         clasesEnEspera.add(new ClaseProgramada("Spinning", Luis, "02:30 PM - 4:00 PM"));
         clasesEnEspera.add(new ClaseProgramada("Pilates", Ana, "05:00 PM - 6:30 PM"));
         clasesEnEspera.add(new ClaseProgramada("Jumping", Ximena, "08:00 PM - 9:30 PM"));
-
-
 
         System.out.println("Clases inicializadas.");
 
@@ -41,7 +38,6 @@ public class Main {
         maquinasInventario.add(new Maquina("Maquina de femoral acostado", "Musculo", true));
         maquinasInventario.add(new Maquina("Maquina de abductores", "Musculo", true));
         maquinasInventario.add(new Maquina("Maquina de elevaciones laterales", "Musculo", true));
-
 
         System.out.println("Máquinas inicializadas. ");
     }
@@ -70,7 +66,6 @@ public class Main {
         } while (opcion != 5);
     }
 
-    // --- MENÚS Y LÓGICA DE CADA ESTRUCTURA ---
     private static void menuPilaTareasUrgentes() {
         int opcion;
         do {
@@ -112,88 +107,88 @@ public class Main {
     }
 
     private static void menuColaClases() {
-    int opcion;
-    do {
-        System.out.println("\n--- Clases Programadas (Cola) ---");
-        System.out.println("1. Ver próxima clase (front)");
-        System.out.println("2. Iniciar próxima clase (dequeue)");
-        System.out.println("3. Ver todas las clases programadas");
-        System.out.println("4. Cancelar una clase");
-        System.out.println("5. Volver al menú principal");
-        System.out.print("Seleccione una opción: ");
-        opcion = scanner.nextInt();
-        scanner.nextLine();
+        int opcion;
+        do {
+            System.out.println("\n--- Clases Programadas (Cola) ---");
+            System.out.println("1. Ver próxima clase (front)");
+            System.out.println("2. Iniciar próxima clase (dequeue)");
+            System.out.println("3. Ver todas las clases programadas");
+            System.out.println("4. Cancelar una clase");
+            System.out.println("5. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = scanner.nextInt();
+            scanner.nextLine();
 
-        switch (opcion) {
-            case 1:
-                if (clasesEnEspera.isEmpty()) {
-                    System.out.println("No hay clases programadas.");
-                } else {
-                    boolean claseEncontrada = false;
-                    Iterator<ClaseProgramada> iterator = clasesEnEspera.iterator();
-                    while (iterator.hasNext() && !claseEncontrada) {
-                        ClaseProgramada c = iterator.next();
-                        if (c.getEstado().equalsIgnoreCase("Programada")) {
-                            System.out.println("La próxima clase es: " + c.getNombreClase());
-                            claseEncontrada = true;
+            switch (opcion) {
+                case 1:
+                    if (clasesEnEspera.isEmpty()) {
+                        System.out.println("No hay clases programadas.");
+                    } else {
+                        boolean claseEncontrada = false;
+                        Iterator<ClaseProgramada> iterator = clasesEnEspera.iterator();
+                        while (iterator.hasNext() && !claseEncontrada) {
+                            ClaseProgramada c = iterator.next();
+                            if (c.getEstado().equalsIgnoreCase("Programada")) {
+                                System.out.println("La próxima clase es: " + c.getNombreClase());
+                                claseEncontrada = true;
+                            }
+                        }
+                        if (!claseEncontrada) {
+                            System.out.println("No hay clases programadas disponibles.");
                         }
                     }
-                    if (!claseEncontrada) {
-                        System.out.println("No hay clases programadas disponibles.");
-                    }
-                }
-                break;
-            case 2:
-                if (clasesEnEspera.isEmpty()) {
-                    System.out.println("No hay clases para iniciar.");
-                } else {
-                    boolean claseIniciada = false;
-                    while (!clasesEnEspera.isEmpty() && !claseIniciada) {
-                        ClaseProgramada c = clasesEnEspera.peek();
-                        if (c.getEstado().equalsIgnoreCase("Cancelada")) {
-                            clasesEnEspera.poll();
-                            System.out.println("Clase de " + c.getNombreClase() + " estaba cancelada, se omite.");
-                        } else if (c.getEstado().equalsIgnoreCase("Programada")) {
-                            clasesEnEspera.poll();
-                            c.setEstado("Finalizada");
-                            System.out.println("¡Clase de " + c.getNombreClase() + " ha iniciado y se ha finalizado!");
-                            claseIniciada = true;
-                        } else {
-                            clasesEnEspera.poll();
-                            System.out.println("Clase de " + c.getNombreClase() + " en estado " + c.getEstado() + ", se omite.");
+                    break;
+                case 2:
+                    if (clasesEnEspera.isEmpty()) {
+                        System.out.println("No hay clases para iniciar.");
+                    } else {
+                        boolean claseIniciada = false;
+                        while (!clasesEnEspera.isEmpty() && !claseIniciada) {
+                            ClaseProgramada c = clasesEnEspera.peek();
+                            if (c.getEstado().equalsIgnoreCase("Cancelada")) {
+                                clasesEnEspera.poll();
+                                System.out.println("Clase de " + c.getNombreClase() + " estaba cancelada, se omite.");
+                            } else if (c.getEstado().equalsIgnoreCase("Programada")) {
+                                clasesEnEspera.poll();
+                                c.setEstado("Finalizada");
+                                System.out.println("¡Clase de " + c.getNombreClase() + " ha iniciado y se ha finalizado!");
+                                claseIniciada = true;
+                            } else {
+                                clasesEnEspera.poll();
+                                System.out.println("Clase de " + c.getNombreClase() + " en estado " + c.getEstado() + ", se omite.");
+                            }
+                        }
+                        if (!claseIniciada) {
+                            System.out.println("No hay clases programadas para iniciar.");
                         }
                     }
-                    if (!claseIniciada) {
-                        System.out.println("No hay clases programadas para iniciar.");
+                    break;
+                case 3:
+                    if (clasesEnEspera.isEmpty()) {
+                        System.out.println("No hay clases programadas.");
+                    } else {
+                        clasesEnEspera.forEach(System.out::println);
                     }
-                }
-                break;
-            case 3:
-                if (clasesEnEspera.isEmpty()) {
-                    System.out.println("No hay clases programadas.");
-                } else {
-                    clasesEnEspera.forEach(System.out::println);
-                }
-                break;
-            case 4:
-                System.out.print("Ingrese el nombre de la clase a cancelar: ");
-                String claseCancelar = scanner.nextLine();
-                boolean encontrada = false;
-                for (ClaseProgramada c : clasesEnEspera) {
-                    if (c.getNombreClase().equalsIgnoreCase(claseCancelar)) {
-                        c.setEstado("Cancelada");
-                        System.out.println("Clase de " + c.getNombreClase() + " ha sido cancelada.");
-                        encontrada = true;
-                        break;
+                    break;
+                case 4:
+                    System.out.print("Ingrese el nombre de la clase a cancelar: ");
+                    String claseCancelar = scanner.nextLine();
+                    boolean encontrada = false;
+                    for (ClaseProgramada c : clasesEnEspera) {
+                        if (c.getNombreClase().equalsIgnoreCase(claseCancelar)) {
+                            c.setEstado("Cancelada");
+                            System.out.println("Clase de " + c.getNombreClase() + " ha sido cancelada.");
+                            encontrada = true;
+                            break;
+                        }
                     }
-                }
-                if (!encontrada) {
-                    System.out.println("Clase no encontrada.");
-                }
-                break;
-        }
-    } while (opcion != 5);
-}
+                    if (!encontrada) {
+                        System.out.println("Clase no encontrada.");
+                    }
+                    break;
+            }
+        } while (opcion != 5);
+    }
 
     private static void menuListaMaquinas() {
         int opcion;
@@ -234,14 +229,18 @@ public class Main {
                     boolean reparada = false;
                     for (Maquina m : maquinasInventario) {
                         if (m.getNombre().equalsIgnoreCase(nombreReparada)) {
-                            m.setFuncionando(true);
-                            System.out.println("La máquina fue marcada como reparada.");
+                            if (m.isFuncionando()) {
+                                System.out.println("Esta máquina no estaba averiada.");
+                            } else {
+                                m.setFuncionando(true);
+                                System.out.println("La máquina fue marcada como reparada.");
+                            }
                             reparada = true;
                             break;
                         }
                     }
                     if (!reparada) {
-                        System.out.println("La máquina no ha sido encontrada, asegurate de quee la hayas escrito bien.");
+                        System.out.println("La máquina no ha sido encontrada, asegúrate de que la hayas escrito bien.");
                     }
                     break;
             }
