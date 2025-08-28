@@ -16,31 +16,31 @@ public class Main {
         // Inicializar Instructores
         instructor Ana = new instructor("Ana García", "Yoga y Pilates");
         instructor Luis = new instructor("Luis Pérez", "Entrenamiento de Cardio");
-        instructor Sofia = new instructor("Sofía Cruz", "Zumba y Baile");
+        instructor Sofia = new instructor("Sofía Cruz", "Zumba");
         instructor Ximena = new instructor("Ximena Cavazos", "Jumpling");
 
 
         // Inicializar Clases Programadas (Cola)
-        clasesEnEspera.add(new ClaseProgramada("Zumba", Sofia, "10:00 AM"));
-        clasesEnEspera.add(new ClaseProgramada("Yoga", Ana, "12:00 AM"));
-        clasesEnEspera.add(new ClaseProgramada("Spinning", Luis, "02:30 PM"));
-        clasesEnEspera.add(new ClaseProgramada("Pilates", Ana, "05:00 PM"));
-        clasesEnEspera.add(new ClaseProgramada("Jumping", Ximena, "08:00 PM"));
+        clasesEnEspera.add(new ClaseProgramada("Zumba", Sofia, "10:00 AM - 11:30 AM"));
+        clasesEnEspera.add(new ClaseProgramada("Yoga", Ana, "12:00 AM - 1:30 PM"));
+        clasesEnEspera.add(new ClaseProgramada("Spinning", Luis, "02:30 PM - 4:00 PM"));
+        clasesEnEspera.add(new ClaseProgramada("Pilates", Ana, "05:00 PM - 6:30 PM"));
+        clasesEnEspera.add(new ClaseProgramada("Jumping", Ximena, "08:00 PM - 9:30 PM"));
 
 
 
         System.out.println("Clases inicializadas.");
 
         // Inicializar Máquinas (Lista)
-        maquinasInventario.add(new Maquina("Caminadora 1", "Cardio", true));
-        maquinasInventario.add(new Maquina("Elíptica 2", "Cardio", true));
+        maquinasInventario.add(new Maquina("Caminadora", "Cardio", true));
+        maquinasInventario.add(new Maquina("Eliptica", "Cardio", true));
         maquinasInventario.add(new Maquina("Prensa de Piernas", "Musculo", true));
-        maquinasInventario.add(new Maquina("Máquina de Jalón", "Musculo", true));
+        maquinasInventario.add(new Maquina("Maquina de Jalon", "Musculo", true));
         maquinasInventario.add(new Maquina("Press banca", "Musculo", true));
-        maquinasInventario.add(new Maquina("Máquina de curl de biceps", "Musculo", true));
+        maquinasInventario.add(new Maquina("Maquina de curl de biceps", "Musculo", true));
         maquinasInventario.add(new Maquina("Maquina de femoral acostado", "Musculo", true));
-        maquinasInventario.add(new Maquina("Máquina de abductores", "Musculo", true));
-        maquinasInventario.add(new Maquina("Máquina de elevaciones laterales", "Musculo", true));
+        maquinasInventario.add(new Maquina("Maquina de abductores", "Musculo", true));
+        maquinasInventario.add(new Maquina("Maquina de elevaciones laterales", "Musculo", true));
 
 
         System.out.println("Máquinas inicializadas. ");
@@ -49,7 +49,7 @@ public class Main {
     private static void mostrarMenuPrincipal() {
         int opcion;
         do {
-            System.out.println("\n--- SISTEMA DE GESTIÓN DEL GIMNASIO ---");
+            System.out.println("\n--- SISTEMA DE GESTIÓN DE TAREAS GYM ---");
             System.out.println("1. Tareas de Mantenimiento Urgente (Pila)");
             System.out.println("2. Clases Programadas (Cola)");
             System.out.println("3. Inventario de Máquinas (Lista)");
