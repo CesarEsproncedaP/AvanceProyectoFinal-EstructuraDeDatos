@@ -112,61 +112,88 @@ public class Main {
     }
 
     private static void menuColaClases() {
-        int opcion;
-        do {
-            System.out.println("\n--- Clases Programadas (Cola) ---");
-            System.out.println("1. Ver próxima clase (front)");
-            System.out.println("2. Iniciar próxima clase (dequeue)");
-            System.out.println("3. Ver todas las clases programadas");
-            System.out.println("4. Cancelar una clase");
-            System.out.println("5. Volver al menú principal");
-            System.out.print("Seleccione una opción: ");
-            opcion = scanner.nextInt();
-            scanner.nextLine();
+    int opcion;
+    do {
+        System.out.println("\n--- Clases Programadas (Cola) ---");
+        System.out.println("1. Ver próxima clase (front)");
+        System.out.println("2. Iniciar próxima clase (dequeue)");
+        System.out.println("3. Ver todas las clases programadas");
+        System.out.println("4. Cancelar una clase");
+        System.out.println("5. Volver al menú principal");
+        System.out.print("Seleccione una opción: ");
+        opcion = scanner.nextInt();
+        scanner.nextLine();
 
-            switch (opcion) {
-                case 1:
-                    if (!clasesEnEspera.isEmpty()) {
-                        System.out.println("La próxima clase es: " + clasesEnEspera.peek().getNombreClase());
-                    } else {
-                        System.out.println("No hay clases programadas.");
-                    }
-                    break;
-                case 2:
-                    if (!clasesEnEspera.isEmpty()) {
-                        ClaseProgramada c = clasesEnEspera.poll();
-                        c.setEstado("Finalizada");
-                        System.out.println("¡Clase de " + c.getNombreClase() + " ha iniciado y se ha finalizado!");
-                    } else {
-                        System.out.println("No hay clases para iniciar.");
-                    }
-                    break;
-                case 3:
-                    if (clasesEnEspera.isEmpty()) {
-                        System.out.println("No hay clases programadas.");
-                    } else {
-                        clasesEnEspera.forEach(System.out::println);
-                    }
-                    break;
-                case 4:
-                    System.out.print("Ingrese el nombre de la clase a cancelar: ");
-                    String claseCancelar = scanner.nextLine();
-                    boolean encontrada = false;
-                    for (ClaseProgramada c : clasesEnEspera) {
-                        if (c.getNombreClase().equalsIgnoreCase(claseCancelar)) {
-                            c.setEstado("Cancelada");
-                            System.out.println("Clase de " + c.getNombreClase() + " ha sido cancelada.");
-                            encontrada = true;
-                            break;
+        switch (opcion) {
+            case 1:
+                if (clasesEnEspera.isEmpty()) {
+                    System.out.println("No hay clases programadas.");
+                } else {
+                    boolean claseEncontrada = false;
+                    Iterator<ClaseProgramada> iterator = clasesEnEspera.iterator();
+                    while (iterator.hasNext() && !claseEncontrada) {
+                        ClaseProgramada c = iterator.next();
+                        if (c.getEstado().equalsIgnoreCase("Programada")) {
+                            System.out.println("La próxima clase es: " + c.getNombreClase());
+                            claseEncontrada = true;
                         }
                     }
-                    if (!encontrada) {
-                        System.out.println("Clase no encontrada.");
+                    if (!claseEncontrada) {
+                        System.out.println("No hay clases programadas disponibles.");
                     }
-                    break;
-            }
-        } while (opcion != 5);
-    }
+                }
+                break;
+            case 2:
+                if (clasesEnEspera.isEmpty()) {
+                    System.out.println("No hay clases para iniciar.");
+                } else {
+                    boolean claseIniciada = false;
+                    while (!clasesEnEspera.isEmpty() && !claseIniciada) {
+                        ClaseProgramada c = clasesEnEspera.peek();
+                        if (c.getEstado().equalsIgnoreCase("Cancelada")) {
+                            clasesEnEspera.poll();
+                            System.out.println("Clase de " + c.getNombreClase() + " estaba cancelada, se omite.");
+                        } else if (c.getEstado().equalsIgnoreCase("Programada")) {
+                            clasesEnEspera.poll();
+                            c.setEstado("Finalizada");
+                            System.out.println("¡Clase de " + c.getNombreClase() + " ha iniciado y se ha finalizado!");
+                            claseIniciada = true;
+                        } else {
+                            clasesEnEspera.poll();
+                            System.out.println("Clase de " + c.getNombreClase() + " en estado " + c.getEstado() + ", se omite.");
+                        }
+                    }
+                    if (!claseIniciada) {
+                        System.out.println("No hay clases programadas para iniciar.");
+                    }
+                }
+                break;
+            case 3:
+                if (clasesEnEspera.isEmpty()) {
+                    System.out.println("No hay clases programadas.");
+                } else {
+                    clasesEnEspera.forEach(System.out::println);
+                }
+                break;
+            case 4:
+                System.out.print("Ingrese el nombre de la clase a cancelar: ");
+                String claseCancelar = scanner.nextLine();
+                boolean encontrada = false;
+                for (ClaseProgramada c : clasesEnEspera) {
+                    if (c.getNombreClase().equalsIgnoreCase(claseCancelar)) {
+                        c.setEstado("Cancelada");
+                        System.out.println("Clase de " + c.getNombreClase() + " ha sido cancelada.");
+                        encontrada = true;
+                        break;
+                    }
+                }
+                if (!encontrada) {
+                    System.out.println("Clase no encontrada.");
+                }
+                break;
+        }
+    } while (opcion != 5);
+}
 
     private static void menuListaMaquinas() {
         int opcion;
