@@ -21,8 +21,6 @@ El sistema **Gestión de Gimnasio** es una codigo escrito en Java que utiliza es
 - **Cola** para gestionar clases programadas con horarios e instructores.
 - **Lista** para el inventario de máquinas, con seguimiento de su estado (funcionando o averiadas).
 
-> **Nota**: Este proyecto trata sobre estructuras de datos en Java y su aplicación en un contexto práctico.
-
 ## Características
 - **Gestión de tareas urgentes**: Agrega, completa y consulta tareas de mantenimiento usando una pila (`Stack`).
 - *Programación de clases*: Visualiza, inicia, cancela o agrega clases programadas usando una cola (`LinkedList` como `Queue`).
