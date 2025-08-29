@@ -16,12 +16,12 @@
 - [Notas Adicionales](#notas-adicionales)
 
 ## Descripción
-El sistema **Gestión de Gimnasio** es una aplicación de consola escrita en Java que utiliza estructuras de datos para organizar las operaciones diarias de un gimnasio. Incluye:
+El sistema **Gestión de Gimnasio** es una codigo escrito en Java que utiliza estructuras de datos para organizar las operaciones diarias de un gimnasio. Incluye:
 - **Pila** para tareas urgentes de mantenimiento (por ejemplo, reparar máquinas).
 - **Cola** para gestionar clases programadas con horarios e instructores.
 - **Lista** para el inventario de máquinas, con seguimiento de su estado (funcionando o averiadas).
 
-> **Nota**: Este proyecto es ideal para aprender sobre estructuras de datos en Java y su aplicación en un contexto práctico.
+> **Nota**: Este proyecto trata sobre estructuras de datos en Java y su aplicación en un contexto práctico.
 
 ## Características
 - **Gestión de tareas urgentes**: Agrega, completa y consulta tareas de mantenimiento usando una pila (`Stack`).
@@ -122,45 +122,4 @@ gestion-gimnasio/
 ├── Tarea.java            # Clase para representar tareas urgentes
 └── README.md             # Este archivo
 ```
-
-## Contribuir
-```bash
-git checkout -b mi-nueva-funcionalidad
-git commit -m "Añadir nueva funcionalidad"
-git push origin mi-nueva-funcionalidad
-```
-1. Haz un fork del repositorio.  
-2. Crea una nueva rama.  
-3. Realiza tus cambios y haz commit.  
-4. Sube tus cambios.  
-5. Crea un Pull Request en GitHub.  
-
-➡️ Asegúrate de seguir las convenciones de código de Java y documenta tus cambios.
-
-## Licencia
-Este proyecto está bajo la **Licencia MIT**. Consulta el archivo LICENSE para más detalles.
-
-## Contacto
-- **Autor:** (Tu Nombre)  
-- **Correo:** tu.email@ejemplo.com  
-- **GitHub:** tu-usuario  
-- **X (Twitter):** @tuusuario  
-
-## Notas Adicionales
-- **Enlaces en la tabla:** Los enlaces en la tabla de requisitos son claros y están bien alineados. Si ves problemas de formato en GitHub, revisa el espaciado en el editor.  
-- **Personalización:** El README usa placeholders como `tu-usuario` y `tu.email@ejemplo.com`. Si proporcionas tu usuario de GitHub o correo, se puede personalizar.  
-- **Convención de código:** La clase `instructor.java` está en minúscula, lo que no sigue las convenciones de Java (debería ser `Instructor.java`). Considera renombrarla para seguir las mejores prácticas.  
-- **Licencia:** Se menciona una licencia MIT, pero no se incluye el archivo LICENSE. Si lo necesitas, solicita uno.  
-- **Instrucciones completas:** Todos los comandos están en bloques de código continuos para facilitar la copia.  
-
-### Instrucciones
-- Copia todo el texto de arriba (Ctrl+A, Ctrl+C).  
-- Pega en el archivo `README.md` en GitHub (Ctrl+V).  
-- Guarda con un mensaje como `Add README`.  
-
-
-
-
-
-
 
