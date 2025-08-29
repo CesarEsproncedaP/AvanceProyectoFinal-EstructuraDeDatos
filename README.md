@@ -10,10 +10,6 @@
 - [Cómo Ejecutar](#cómo-ejecutar)
 - [Uso](#uso)
 - [Estructura del Proyecto](#estructura-del-proyecto)
-- [Contribuir](#contribuir)
-- [Licencia](#licencia)
-- [Contacto](#contacto)
-- [Notas Adicionales](#notas-adicionales)
 
 ## Descripción
 El sistema **Gestión de Gimnasio** es una codigo escrito en Java que utiliza estructuras de datos para organizar las operaciones diarias de un gimnasio. Incluye:
