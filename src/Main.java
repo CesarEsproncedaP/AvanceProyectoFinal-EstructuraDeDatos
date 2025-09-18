@@ -59,9 +59,9 @@ public class Main {
         int opcion;
         do {
             System.out.println("\n--- SISTEMA DE GESTIÓN DE TAREAS GYM ---");
-            System.out.println("1. Tareas de Mantenimiento Urgente (Pila)");
-            System.out.println("2. Clases Programadas (Cola)");
-            System.out.println("3. Inventario de Máquinas (Lista)");
+            System.out.println("1. Tareas de Mantenimiento Urgente ");
+            System.out.println("2. Clases Programadas ");
+            System.out.println("3. Inventario de Máquinas ");
             System.out.println("4. Ver estado de todas las tareas y equipos");
             System.out.println("5. Salir");
             System.out.print("Seleccione una opción: ");
@@ -83,10 +83,10 @@ public class Main {
     private static void menuPilaTareasUrgentes() {
         int opcion;
         do {
-            System.out.println("\n--- Mantenimiento Urgente (Pila) ---");
-            System.out.println("1. Agregar tarea (push)");
-            System.out.println("2. Completar tarea (pop)");
-            System.out.println("3. Ver próxima tarea (peek)");
+            System.out.println("\n--- Mantenimiento Urgente ---");
+            System.out.println("1. Agregar tarea ");
+            System.out.println("2. Completar tarea ");
+            System.out.println("3. Ver próxima tarea ");
             System.out.println("4. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
             opcion = scanner.nextInt();
@@ -123,9 +123,9 @@ public class Main {
     private static void menuColaClases() {
     int opcion;
     do {
-        System.out.println("\n--- Clases Programadas (Cola) ---");
-        System.out.println("1. Ver próxima clase (front)");
-        System.out.println("2. Iniciar próxima clase (dequeue)");
+        System.out.println("\n--- Clases Programadas  ---");
+        System.out.println("1. Ver próxima clase ");
+        System.out.println("2. Iniciar próxima clase ");
         System.out.println("3. Ver todas las clases programadas");
         System.out.println("4. Cancelar una clase");
         System.out.println("5. Agregar una clase programada");
@@ -235,7 +235,7 @@ public class Main {
     private static void menuListaMaquinas() {
         int opcion;
         do {
-            System.out.println("\n--- Inventario de Máquinas (Lista) ---");
+            System.out.println("\n--- Inventario de Máquinas ---");
             System.out.println("1. Ver todas las máquinas");
             System.out.println("2. Marcar una máquina como averiada");
             System.out.println("3. Marcar una máquina como reparada");
@@ -291,14 +291,14 @@ public class Main {
 
     private static void verTodo() {
         System.out.println("\n--- ESTADO COMPLETO DEL GIMNASIO ---");
-        System.out.println("\n--- TAREAS URGENTES (Pila) ---");
+        System.out.println("\n--- TAREAS URGENTES ---");
         if (tareasUrgentes.isEmpty()) {
             System.out.println("¡No hay tareas urgentes pendientes!");
         } else {
             tareasUrgentes.forEach(System.out::println);
         }
 
-        System.out.println("\n--- CLASES PROGRAMADAS (Cola) ---");
+        System.out.println("\n--- CLASES PROGRAMADAS ---");
         if (clasesEnEspera.isEmpty()) {
             System.out.println("Todas las clases han sido impartidas hoy.");
         } else {
