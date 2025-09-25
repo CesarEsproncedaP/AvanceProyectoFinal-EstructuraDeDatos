@@ -1,53 +1,47 @@
-// Clase para árbol binario de instructores
-class ArbolBinarioEmpleados {
+import javax.swing.JTextArea;
+
+public class ArbolBinarioEmpleados {
     private NodoArbol raiz;
+
+    public ArbolBinarioEmpleados() {
+        this.raiz = null;
+    }
+
+    public NodoArbol getRaiz() {
+        return raiz;
+    }
 
     public void insertar(Empleado empleado) {
         raiz = insertarRecursivo(raiz, empleado);
     }
 
-    private NodoArbol insertarRecursivo(NodoArbol nodo, Empleado empleado) {
-        if (nodo == null) {
+    private NodoArbol insertarRecursivo(NodoArbol actual, Empleado empleado) {
+        if (actual == null) {
             return new NodoArbol(empleado);
         }
-        if (empleado.getDepartamento().compareTo(nodo.empleado.getDepartamento()) < 0) {
-            nodo.izquierda = insertarRecursivo(nodo.izquierda, empleado);
-        } else if (empleado.getDepartamento().compareTo(nodo.empleado.getDepartamento()) > 0) {
-            nodo.derecha = insertarRecursivo(nodo.derecha, empleado);
+        if (empleado.getDepartamento().compareTo(actual.empleado.getDepartamento()) < 0) {
+            actual.izquierda = insertarRecursivo(actual.izquierda, empleado);
+        } else if (empleado.getDepartamento().compareTo(actual.empleado.getDepartamento()) > 0) {
+            actual.derecha = insertarRecursivo(actual.derecha, empleado);
         }
-        return nodo;
+        return actual;
     }
 
-    public void buscarPorDepartamento(String departamento) {
-        buscarPorDepartamentoRecursivo(raiz, departamento);
-    }
-
-    private void buscarPorDepartamentoRecursivo(NodoArbol nodo, String departamento) {
-        if (nodo == null) {
-            return;
-        }
-        if (nodo.empleado.getDepartamento().equalsIgnoreCase(departamento)) {
-            System.out.println(nodo.empleado);
-        }
-        buscarPorDepartamentoRecursivo(nodo.izquierda, departamento);
-        buscarPorDepartamentoRecursivo(nodo.derecha, departamento);
-    }
-
-    // Método auxiliar para recorrido inorden en el árbol
-    public void mostrarInorden() {
-        if (raiz == null) {
-            System.out.println("El árbol está vacío.");
-        } else {
-            mostrarInordenRecursivo(raiz);
-        }
-    }
-
-    private void mostrarInordenRecursivo(NodoArbol nodo) {
+    public void mostrarInorden(NodoArbol nodo, JTextArea displayArea) {
         if (nodo != null) {
-            mostrarInordenRecursivo(nodo.izquierda);
-            System.out.println(nodo.empleado);
-            mostrarInordenRecursivo(nodo.derecha);
+            mostrarInorden(nodo.izquierda, displayArea);
+            displayArea.append(nodo.empleado.toString() + "\n");
+            mostrarInorden(nodo.derecha, displayArea);
+        }
+    }
+
+    public void buscarPorDepartamento(NodoArbol nodo, String departamento, JTextArea displayArea) {
+        if (nodo != null) {
+            if (departamento.equals(nodo.empleado.getDepartamento())) {
+                displayArea.append(nodo.empleado.toString() + "\n");
+            }
+            buscarPorDepartamento(nodo.izquierda, departamento, displayArea);
+            buscarPorDepartamento(nodo.derecha, departamento, displayArea);
         }
     }
 }
-
