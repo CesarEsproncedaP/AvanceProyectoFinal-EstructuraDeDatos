@@ -1,12 +1,12 @@
-public class Maquina {
+public class Usuario {
     private String id;
     private String nombre;
-    private String estado;
+    private String password;
 
-    public Maquina(String id, String nombre, String estado) {
+    public Usuario(String id, String nombre, String password) {
         this.id = id;
         this.nombre = nombre;
-        this.estado = estado;
+        this.password = password;
     }
 
     public String getId() {
@@ -17,7 +17,7 @@ public class Maquina {
         return nombre;
     }
 
-    public String getEstado() {
-        return estado;
+    public String getPassword() {
+        return password;
     }
 }

@@ -1,7 +1,7 @@
-// Clase para nodos del árbol binario
-class NodoArbol {
+public class NodoArbol {
     Empleado empleado;
-    NodoArbol izquierda, derecha; // Referencias a hijos izquierdo y derecho
+    NodoArbol izquierda;
+    NodoArbol derecha;
 
     public NodoArbol(Empleado empleado) {
         this.empleado = empleado;

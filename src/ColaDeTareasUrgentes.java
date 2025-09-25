@@ -24,3 +24,4 @@ public class ColaDeTareasUrgentes {
     public List<Tarea> getTareas() {
         return colaPrioridades.stream().sorted().collect(Collectors.toList());
     }
+}
