@@ -6,7 +6,8 @@ import java.awt.event.MouseEvent;
 public class MainFrame extends JFrame {
 
     private JFrame loginFrame;
-
+    private JLabel userLabel;  
+    
     public MainFrame(JFrame loginFrame) {
         this.loginFrame = loginFrame;
         setTitle("Sistema de Gestión de Gimnasio - GYM MASTER");
@@ -18,10 +19,23 @@ public class MainFrame extends JFrame {
         mainPanel.setBackground(new Color(20, 30, 48));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
+        // Panel superior para el título y el usuario actual
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+
         JLabel titleLabel = new JLabel("GYM MASTER", SwingConstants.CENTER);
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
-        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        topPanel.add(titleLabel, BorderLayout.CENTER);
+
+        // Etiqueta para el usuario actual
+        String userName = Main.currentUser != null ? Main.currentUser.substring(0, 1).toUpperCase() + Main.currentUser.substring(1) : "Invitado";
+        userLabel = new JLabel("Usuario Actual: " + userName, SwingConstants.RIGHT);
+        userLabel.setForeground(Color.WHITE);
+        userLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        topPanel.add(userLabel, BorderLayout.NORTH);
+
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
         JPanel buttonGridPanel = new JPanel(new GridLayout(2, 2, 20, 20));
         buttonGridPanel.setOpaque(false);
@@ -81,6 +95,11 @@ public class MainFrame extends JFrame {
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
+    }
+
+    public void updateUserLabel() {
+        String userName = Main.currentUser != null ? Main.currentUser.substring(0, 1).toUpperCase() + Main.currentUser.substring(1) : "Invitado";
+        userLabel.setText("Usuario Actual: " + userName);
     }
 
     private JButton createStyledButton(String text, Color baseColor) {

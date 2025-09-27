@@ -7,7 +7,6 @@ public class LoginFrame extends JFrame {
     private JTextField userField;
     private JPasswordField passwordField;
 
-    // Referencias a las otras ventanas para la navegación
     private MainFrame mainFrame;
     private RegistroFrame registroFrame;
 
@@ -72,7 +71,6 @@ public class LoginFrame extends JFrame {
         add(mainPanel);
     }
     
-    // Método para pasar las referencias de las otras ventanas
     public void setFrames(MainFrame mainFrame, RegistroFrame registroFrame) {
         this.mainFrame = mainFrame;
         this.registroFrame = registroFrame;
@@ -89,6 +87,10 @@ public class LoginFrame extends JFrame {
 
         // Verifica contra el mapa de usuarios
         if (Main.users.containsKey(user) && Main.users.get(user).equals(password)) {
+            Main.currentUser = user;  // Setear el usuario actual
+            if (mainFrame != null) {
+                mainFrame.updateUserLabel();  // Actualizar el label en MainFrame
+            }
             JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso!", "Bienvenido", JOptionPane.INFORMATION_MESSAGE);
             this.setVisible(false);
             if (mainFrame != null) {

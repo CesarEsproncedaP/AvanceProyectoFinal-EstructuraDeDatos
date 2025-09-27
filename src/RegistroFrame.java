@@ -80,7 +80,6 @@ public class RegistroFrame extends JFrame {
                 return;
             }
 
-            // Almacena el usuario (ignoramos 'name' por ahora, ya que no se usa en login)
             Main.users.put(user, pass);
             JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
             this.dispose();

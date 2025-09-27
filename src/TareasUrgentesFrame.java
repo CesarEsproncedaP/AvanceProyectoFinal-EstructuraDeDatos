@@ -1,18 +1,18 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.util.Queue;
-import java.util.PriorityQueue;
+import java.text.*;
 
 public class TareasUrgentesFrame extends JFrame {
     private JTable tareasTable;
     private DefaultTableModel tableModel;
-    private Queue<TareaPrioridad> colaTareas;
+    private PriorityQueue<TareaPrioridad> colaTareas;
     private JFrame previousFrame;
-
+    private static final Date CURRENT_DATE = new Date(); 
     public TareasUrgentesFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Gestión de Tareas Urgentes - GYM MASTER");
@@ -20,30 +20,12 @@ public class TareasUrgentesFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
-        colaTareas = new PriorityQueue<>();
-        
-        // Datos de ejemplo
-        colaTareas.add(new TareaPrioridad("T001", "Limpiar area de pesas", 5));
-        colaTareas.add(new TareaPrioridad("T002", "Verificar sistema de sonido", 3));
-        colaTareas.add(new TareaPrioridad("T003", "Revisar maquina de cardio", 1));
-        colaTareas.add(new TareaPrioridad("T004", "Programar reunion con instructores", 2));
-        colaTareas.add(new TareaPrioridad("T005", "Limpiar vidrios del frente", 4));
-        colaTareas.add(new TareaPrioridad("T006", "Inventario de equipos de spinning", 3));
-        colaTareas.add(new TareaPrioridad("T007", "Actualizar perfil de cliente", 1));
-        colaTareas.add(new TareaPrioridad("T008", "Reparar la caminadora 3", 5));
-        colaTareas.add(new TareaPrioridad("T009", "Revisar las luces del gimnasio", 2));
-        colaTareas.add(new TareaPrioridad("T010", "Organizar sala de spinning", 4));
-        colaTareas.add(new TareaPrioridad("T011", "Comprar mas toallas", 1));
-        colaTareas.add(new TareaPrioridad("T012", "Limpiar los baños", 3));
-        colaTareas.add(new TareaPrioridad("T013", "Actualizar software de maquinas", 2));
-        colaTareas.add(new TareaPrioridad("T014", "Revisar los aires acondicionados", 5));
-        colaTareas.add(new TareaPrioridad("T015", "Reemplazar los tapetes del piso", 4));
+        colaTareas = Main.getColaTareas();
 
         JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
         mainPanel.setBackground(new Color(26, 26, 26));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
-        // Panel superior con título y botón de "Volver"
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
         JLabel titleLabel = new JLabel("Gestión de Tareas Urgentes", SwingConstants.CENTER);
@@ -63,8 +45,7 @@ public class TareasUrgentesFrame extends JFrame {
         topPanel.add(backButtonPanel, BorderLayout.EAST);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Configuración de la tabla
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Descripción", "Prioridad"}, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Descripción", "Fecha Entrega", "Tiempo Estimado"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -78,12 +59,19 @@ public class TareasUrgentesFrame extends JFrame {
         tareasTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
         tareasTable.getTableHeader().setBackground(new Color(50, 50, 50));
         tareasTable.getTableHeader().setForeground(new Color(74, 189, 172));
-        tareasTable.setDefaultRenderer(Object.class, new PriorityTableCellRenderer());
+        tareasTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                c.setBackground(new Color(40, 40, 40)); // Se predeterminA un color para todas las filas
+                c.setForeground(Color.WHITE);
+                return c;
+            }
+        });
         JScrollPane scrollPane = new JScrollPane(tareasTable);
         scrollPane.getViewport().setBackground(new Color(40, 40, 40));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Panel de botones inferiores
         JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         bottomButtonPanel.setOpaque(false);
 
@@ -98,16 +86,20 @@ public class TareasUrgentesFrame extends JFrame {
 
         JButton deleteButton = createStyledButton("Eliminar Tarea", new Color(255, 50, 50), new Color(180, 30, 30));
         deleteButton.addActionListener(e -> eliminarTareaPorId());
+
+        JButton statsButton = createStyledButton("Calcular Estadísticas", new Color(138, 43, 226), new Color(100, 30, 180));
+        statsButton.addActionListener(e -> calcularEstadisticas());
         
         bottomButtonPanel.add(showButton);
         bottomButtonPanel.add(takeNextButton);
         bottomButtonPanel.add(addButton);
         bottomButtonPanel.add(deleteButton);
+        bottomButtonPanel.add(statsButton);
 
         mainPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
-        mostrarTareas(); // Se llama automáticamente al iniciar
+        mostrarTareas();
     }
 
     private void mostrarTareas() {
@@ -115,23 +107,22 @@ public class TareasUrgentesFrame extends JFrame {
         if (colaTareas.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No hay tareas en la cola.", "Información", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            List<TareaPrioridad> listaTemporal = new ArrayList<>();
-            while (!colaTareas.isEmpty()) {
-                TareaPrioridad tarea = colaTareas.poll();
-                listaTemporal.add(tarea);
-                tableModel.addRow(new Object[]{tarea.getId(), tarea.getDescripcion(), tarea.getPrioridad()});
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.List<TareaPrioridad> listaTemporal = new java.util.ArrayList<>(colaTareas);
+            Collections.sort(listaTemporal, Comparator.comparing(TareaPrioridad::getFechaEntrega)); // Orden por fecha de entrega ascendente de tareas
+            for (TareaPrioridad tarea : listaTemporal) {
+                tableModel.addRow(new Object[]{tarea.getId(), tarea.getDescripcion(), sdf.format(tarea.getFechaEntrega()), tarea.getTiempoEstimado()});
             }
-            colaTareas.addAll(listaTemporal);
         }
     }
 
     private void tomarSiguienteTarea() {
         if (!colaTareas.isEmpty()) {
             TareaPrioridad tareaTomada = colaTareas.poll();
+            Main.getHashTareas().remove(tareaTomada.getId());
             JOptionPane.showMessageDialog(this, "Has tomado la tarea más urgente:\n" +
                 "ID: " + tareaTomada.getId() + "\n" +
-                "Descripción: " + tareaTomada.getDescripcion() + "\n" +
-                "Prioridad: " + tareaTomada.getPrioridad(), "Tarea Tomada", JOptionPane.INFORMATION_MESSAGE);
+                "Descripción: " + tareaTomada.getDescripcion(), "Tarea Tomada", JOptionPane.INFORMATION_MESSAGE);
             mostrarTareas();
         } else {
             JOptionPane.showMessageDialog(this, "No hay tareas en la cola.", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -142,38 +133,30 @@ public class TareasUrgentesFrame extends JFrame {
         JPanel panel = new JPanel(new GridLayout(0, 1));
         panel.setBackground(new Color(26, 26, 26));
         JTextField descripcionField = new JTextField(20);
-        descripcionField.setForeground(Color.WHITE); // Corrected
-        descripcionField.setBackground(new Color(50, 50, 50)); // Corrected
+        descripcionField.setForeground(Color.WHITE);
+        descripcionField.setBackground(new Color(50, 50, 50));
         
-        String[] prioridades = {"1 - Crítico (Rojo)", "2 - Alta (Naranja)", "3 - Media (Amarillo)", "4 - Baja (Azul)", "5 - Muy Baja (Verde)"};
-        JComboBox<String> prioridadCombo = new JComboBox<>(prioridades);
-        prioridadCombo.setForeground(Color.WHITE); // Corrected
-        prioridadCombo.setBackground(new Color(50, 50, 50)); // Corrected
-        
-        prioridadCombo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value != null) {
-                    String item = (String) value;
-                    int prioridad = Integer.parseInt(item.split(" ")[0]);
-                    Color color = getColorForPriority(prioridad);
-                    label.setForeground(color);
-                }
-                label.setBackground(new Color(50, 50, 50));
-                return label;
-            }
-        });
+        JTextField fechaField = new JTextField(20);
+        fechaField.setForeground(Color.WHITE);
+        fechaField.setBackground(new Color(50, 50, 50));
+        JTextField tiempoField = new JTextField(20);
+        tiempoField.setForeground(Color.WHITE);
+        tiempoField.setBackground(new Color(50, 50, 50));
 
         JLabel descripcionLabel = new JLabel("Descripción:", SwingConstants.CENTER);
-        descripcionLabel.setForeground(Color.WHITE); // Corrected
+        descripcionLabel.setForeground(Color.WHITE);
         panel.add(descripcionLabel);
         panel.add(descripcionField);
-        
-        JLabel prioridadLabel = new JLabel("Prioridad (1 = más urgente):", SwingConstants.CENTER);
-        prioridadLabel.setForeground(Color.WHITE); // Corrected
-        panel.add(prioridadLabel);
-        panel.add(prioridadCombo);
+
+        JLabel fechaLabel = new JLabel("Fecha Entrega (yyyy-MM-dd):", SwingConstants.CENTER);
+        fechaLabel.setForeground(Color.WHITE);
+        panel.add(fechaLabel);
+        panel.add(fechaField);
+
+        JLabel tiempoLabel = new JLabel("Tiempo Estimado (horas):", SwingConstants.CENTER);
+        tiempoLabel.setForeground(Color.WHITE);
+        panel.add(tiempoLabel);
+        panel.add(tiempoField);
         
         UIManager.put("OptionPane.background", new Color(26, 26, 26));
         UIManager.put("Panel.background", new Color(26, 26, 26));
@@ -183,15 +166,25 @@ public class TareasUrgentesFrame extends JFrame {
         
         if (result == JOptionPane.OK_OPTION) {
             String nuevaDescripcion = descripcionField.getText().trim();
-            int nuevaPrioridad = Integer.parseInt(((String) prioridadCombo.getSelectedItem()).split(" ")[0]);
+            String fechaStr = fechaField.getText().trim();
+            String tiempoStr = tiempoField.getText().trim();
 
-            if (!nuevaDescripcion.isEmpty()) {
-                String nuevoId = "T" + (colaTareas.size() + 16); 
-                colaTareas.add(new TareaPrioridad(nuevoId, nuevaDescripcion, nuevaPrioridad));
-                JOptionPane.showMessageDialog(this, "Tarea agregada: " + nuevaDescripcion, "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                mostrarTareas();
+            if (!nuevaDescripcion.isEmpty() && !fechaStr.isEmpty() && !tiempoStr.isEmpty()) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Date nuevaFecha = sdf.parse(fechaStr);
+                    int nuevoTiempo = Integer.parseInt(tiempoStr);
+                    String nuevoId = "T" + (colaTareas.size() + 1);
+                    TareaPrioridad nuevaTarea = new TareaPrioridad(nuevoId, nuevaDescripcion, nuevaFecha, nuevoTiempo);
+                    colaTareas.add(nuevaTarea);
+                    Main.getHashTareas().put(nuevoId, nuevaTarea);
+                    JOptionPane.showMessageDialog(this, "Tarea agregada: " + nuevaDescripcion, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    mostrarTareas();
+                } catch (NumberFormatException | ParseException ex) {
+                    JOptionPane.showMessageDialog(this, "Formato inválido para fecha o tiempo.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showMessageDialog(this, "Por favor, ingresa una descripción para la tarea.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -208,7 +201,6 @@ public class TareasUrgentesFrame extends JFrame {
         if (idTarea != null && !idTarea.trim().isEmpty()) {
             boolean tareaEncontrada = false;
             Queue<TareaPrioridad> nuevaCola = new PriorityQueue<>();
-            
             while (!colaTareas.isEmpty()) {
                 TareaPrioridad tarea = colaTareas.poll();
                 if (!tarea.getId().equalsIgnoreCase(idTarea)) {
@@ -217,9 +209,10 @@ public class TareasUrgentesFrame extends JFrame {
                     tareaEncontrada = true;
                 }
             }
-            colaTareas = nuevaCola;
-            
+            colaTareas.clear();
+            colaTareas.addAll(nuevaCola);
             if (tareaEncontrada) {
+                Main.getHashTareas().remove(idTarea.toUpperCase());
                 JOptionPane.showMessageDialog(this, "Tarea " + idTarea + " eliminada.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 mostrarTareas();
             } else {
@@ -230,24 +223,15 @@ public class TareasUrgentesFrame extends JFrame {
         }
     }
     
-    // Clase interna para el renderizador de color de la tabla
-    class PriorityTableCellRenderer extends JLabel implements TableCellRenderer {
-        public PriorityTableCellRenderer() {
-            setOpaque(true);
-        }
+    private int calcularTiempoTotalRecursivo(List<TareaPrioridad> tareas, int index) {
+        if (index >= tareas.size()) return 0;
+        return tareas.get(index).getTiempoEstimado() + calcularTiempoTotalRecursivo(tareas, index + 1);
+    }
 
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Object prioridadValue = table.getValueAt(row, 2);
-            int prioridad = (prioridadValue instanceof Integer) ? (int) prioridadValue : 0;
-            
-            Color color = getColorForPriority(prioridad);
-            setBackground(color);
-            setForeground(Color.BLACK);
-            setText(value.toString());
-
-            return this;
-        }
+    private void calcularEstadisticas() {
+        List<TareaPrioridad> tareasList = new ArrayList<>(colaTareas);
+        int tiempoTotal = calcularTiempoTotalRecursivo(tareasList, 0);
+        JOptionPane.showMessageDialog(this, "Tiempo estimado total para completar tareas: " + tiempoTotal + " horas", "Estadísticas", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
@@ -261,46 +245,5 @@ public class TareasUrgentesFrame extends JFrame {
         button.setOpaque(true);
         button.setBorderPainted(false);
         return button;
-    }
-    
-    // Método auxiliar para obtener color por prioridad
-    private Color getColorForPriority(int prioridad) {
-        switch (prioridad) {
-            case 1: return new Color(255, 100, 100);
-            case 2: return new Color(255, 165, 0);
-            case 3: return new Color(255, 255, 100);
-            case 4: return new Color(173, 216, 230);
-            case 5: return new Color(144, 238, 144);
-            default: return Color.WHITE;
-        }
-    }
-}
-
-class TareaPrioridad implements Comparable<TareaPrioridad> {
-    private String id;
-    private String descripcion;
-    private int prioridad;
-
-    public TareaPrioridad(String id, String descripcion, int prioridad) {
-        this.id = id;
-        this.descripcion = descripcion;
-        this.prioridad = prioridad;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public int getPrioridad() {
-        return prioridad;
-    }
-
-    @Override
-    public int compareTo(TareaPrioridad otraTarea) {
-        return Integer.compare(this.prioridad, otraTarea.prioridad);
     }
 }

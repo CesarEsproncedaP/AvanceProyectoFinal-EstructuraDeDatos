@@ -38,7 +38,6 @@ public class Tarea implements Comparable<Tarea> {
     
     @Override
     public int compareTo(Tarea otraTarea) {
-        // Criterio de comparación: prioridad ascendente
         return Integer.compare(this.prioridad, otraTarea.prioridad);
     }
 }

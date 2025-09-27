@@ -8,11 +8,9 @@ public class HorarioClasesFrame extends JFrame {
 
     private JTable clasesTable;
     private DefaultTableModel tableModel;
-    // Lista estática para que los datos persistan entre ventanas
     private static List<Clase> listaClases = new ArrayList<>();
     private JFrame previousFrame;
 
-    // Se agrega un constructor sin el previousFrame para la primera llamada desde el menú principal.
     public HorarioClasesFrame() {
         this(null);
     }
@@ -25,8 +23,6 @@ public class HorarioClasesFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         if (listaClases.isEmpty()) {
-            // Estas clases son usadas para poblar la tabla, así que no se remueven.
-            // Si no se usan en el proyecto general, puedes comentarlas o removerlas, pero la tabla quedaría vacía.
             listaClases.add(new Clase("Spinning", "10:00 - 11:00", "Lunes", "Sala 1"));
             listaClases.add(new Clase("Yoga", "11:00 - 12:00", "Martes", "Sala 2"));
             listaClases.add(new Clase("Zumba", "17:00 - 18:00", "Miércoles", "Sala 1"));
@@ -146,7 +142,6 @@ class Clase {
     public void setAsientosOcupados(int asientosOcupados) { this.asientosOcupados = asientosOcupados; }
 }
 
-// Definición de AsientosFrame con el constructor correcto (JFrame, Clase)
 class AsientosFrame extends JFrame {
     private JFrame previousFrame;
     private Clase clase;

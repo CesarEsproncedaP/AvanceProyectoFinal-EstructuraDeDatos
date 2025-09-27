@@ -109,9 +109,9 @@ public class InventarioMaquinasFrame extends JFrame {
         JButton changeStateButton = createStyledButton("Cambiar Estado", new Color(138, 43, 226), new Color(100, 30, 180));
         changeStateButton.addActionListener(e -> {
             CambiarEstadoDialog dialog = new CambiarEstadoDialog(this, listaMaquinas);
-            dialog.setVisible(true); // Hace visible el diálogo de forma modal
+            dialog.setVisible(true); 
             if (dialog.isStateChanged()) { // Verifica si se realizó un cambio antes de cerrar
-                refreshAndResetFilter(); // Refresca y restablece el filtro
+                refreshAndResetFilter(); // Refresca
             }
         });
 

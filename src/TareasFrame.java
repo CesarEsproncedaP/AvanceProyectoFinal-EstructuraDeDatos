@@ -28,8 +28,6 @@ public class TareasFrame extends JFrame {
         agregarButton.addActionListener(e -> {
             String nuevaTarea = tareaTextField.getText();
             if (!nuevaTarea.isEmpty()) {
-                // Aquí va la lógica para guardar la tarea en tu sistema
-                // Puedes guardarla en una lista, un archivo, etc.
                 JOptionPane.showMessageDialog(this, "Tarea agregada: " + nuevaTarea);
                 tareaTextField.setText(""); // Limpia el campo
             } else {
