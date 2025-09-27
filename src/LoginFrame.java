@@ -11,9 +11,6 @@ public class LoginFrame extends JFrame {
     private MainFrame mainFrame;
     private RegistroFrame registroFrame;
 
-    private static final String DEFAULT_USER = "admin";
-    private static final String DEFAULT_PASS = "admin123";
-
     public LoginFrame() {
         setTitle("Iniciar Sesión - GYM MASTER");
         setSize(400, 300);
@@ -82,10 +79,16 @@ public class LoginFrame extends JFrame {
     }
 
     private void attemptLogin() {
-        String user = userField.getText();
+        String user = userField.getText().trim();
         String password = new String(passwordField.getPassword());
 
-        if (DEFAULT_USER.equals(user) && DEFAULT_PASS.equals(password)) {
+        if (user.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa usuario y contraseña.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Verifica contra el mapa de usuarios
+        if (Main.users.containsKey(user) && Main.users.get(user).equals(password)) {
             JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso!", "Bienvenido", JOptionPane.INFORMATION_MESSAGE);
             this.setVisible(false);
             if (mainFrame != null) {
@@ -135,26 +138,5 @@ public class LoginFrame extends JFrame {
         button.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
-    }
-
-    class GradientPanel extends JPanel {
-        private Color color1;
-        private Color color2;
-
-        public GradientPanel(Color color1, Color color2) {
-            this.color1 = color1;
-            this.color2 = color2;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g;
-            int w = getWidth();
-            int h = getHeight();
-            GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
-            g2d.setPaint(gp);
-            g2d.fillRect(0, 0, w, h);
-        }
     }
 }

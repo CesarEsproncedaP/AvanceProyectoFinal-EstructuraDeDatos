@@ -5,6 +5,14 @@ import java.util.Queue;
 import java.util.PriorityQueue;
 
 public class Main {
+    // Almacenamiento estático de usuarios (username -> password)
+    public static Map<String, String> users = new HashMap<>();
+
+    static {
+        // Usuario por defecto
+        users.put("admin", "admin123");
+    }
+
     public static void main(String[] args) {
         // Asegura que la ventana de Login se inicie en el hilo de Swing.
         SwingUtilities.invokeLater(() -> {

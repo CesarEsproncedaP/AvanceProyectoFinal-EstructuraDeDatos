@@ -20,4 +20,8 @@ public class Maquina {
     public String getEstado() {
         return estado;
     }
+
+    public void setEstado(String nuevoEstado) {
+        this.estado = nuevoEstado;
+    }
 }

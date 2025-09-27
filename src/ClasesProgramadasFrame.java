@@ -3,9 +3,14 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ClasesProgramadasFrame extends JFrame {
     private List<Clase> clasesDisponibles;
@@ -53,18 +58,35 @@ public class ClasesProgramadasFrame extends JFrame {
 
         clasesDisponibles.add(new Clase("Yoga Avanzado", "Ana García", "Lunes 10:00 AM - 11:30 AM"));
         clasesDisponibles.add(new Clase("Zumba Fitness", "Sofía Cruz", "Lunes 12:00 PM - 1:30 PM"));
+        clasesDisponibles.add(new Clase("Danza Aeróbica", "Sofía Cruz", "Lunes 6:00 PM - 7:30 PM"));
         clasesDisponibles.add(new Clase("Spinning Intenso", "Luis Pérez", "Martes 8:00 PM - 9:30 PM"));
         clasesDisponibles.add(new Clase("Pilates Mat", "Ana García", "Miércoles 6:00 AM - 7:00 AM"));
+        clasesDisponibles.add(new Clase("Levantamiento Olímpico", "Pedro Díaz", "Miércoles 9:00 AM - 10:00 AM"));
         clasesDisponibles.add(new Clase("Cardio Extremo", "Luis Pérez", "Jueves 7:00 PM - 8:00 PM"));
+        clasesDisponibles.add(new Clase("Funcional HIIT", "Marta Gómez", "Jueves 9:00 AM - 10:00 AM"));
         clasesDisponibles.add(new Clase("Boxeo Fit", "Roberto Estrada", "Viernes 9:00 AM - 10:00 AM"));
         clasesDisponibles.add(new Clase("Cross Training", "Ximena Cavazos", "Sábado 11:00 AM - 12:00 PM"));
-        clasesDisponibles.add(new Clase("Danza Aeróbica", "Sofía Cruz", "Lunes 6:00 PM - 7:30 PM"));
-        clasesDisponibles.add(new Clase("Levantamiento Olímpico", "Pedro Díaz", "Miércoles 9:00 AM - 10:00 AM"));
-        clasesDisponibles.add(new Clase("Funcional HIIT", "Marta Gómez", "Jueves 9:00 AM - 10:00 AM"));
 
-        clasesDisponibles.sort(Comparator.comparing(Clase::getInstructor)
-                                         .thenComparing(Clase::getNombre)
-                                         .thenComparing(Clase::getHorario));
+        // Ordenar por día y luego por hora de inicio
+        Map<String, Integer> dayOrder = new HashMap<>();
+        dayOrder.put("Lunes", 1);
+        dayOrder.put("Martes", 2);
+        dayOrder.put("Miércoles", 3);
+        dayOrder.put("Jueves", 4);
+        dayOrder.put("Viernes", 5);
+        dayOrder.put("Sábado", 6);
+        dayOrder.put("Domingo", 7);
+
+        clasesDisponibles.sort(Comparator.comparing((Clase c) -> {
+            String[] parts = c.getHorario().split(" ", 2);
+            return dayOrder.getOrDefault(parts[0], Integer.MAX_VALUE);
+        }).thenComparing((Clase c) -> {
+            String[] parts = c.getHorario().split(" ", 2);
+            if (parts.length < 2) return LocalTime.MAX;
+            String horaInicio = parts[1].split(" - ")[0].trim().replace(" ", "");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mma").withLocale(Locale.ENGLISH);
+            return LocalTime.parse(horaInicio.toUpperCase(), formatter);
+        }));
 
         String[] columnNames = {"Instructor", "Clase", "Horario"};
         Object[][] data = new Object[clasesDisponibles.size()][3];
@@ -102,7 +124,7 @@ public class ClasesProgramadasFrame extends JFrame {
         selectButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
-                new AsientoFrame(clasesDisponibles.get(selectedRow)).setVisible(true);
+                new ClassSeatFrame(clasesDisponibles.get(selectedRow)).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "Por favor, selecciona una clase de la tabla.", "Selecciona una clase", JOptionPane.WARNING_MESSAGE);
             }
@@ -206,35 +228,10 @@ public class ClasesProgramadasFrame extends JFrame {
     }
 }
 
-class Clase {
-    private String nombre;
-    private String instructor;
-    private String horario;
-
-    public Clase(String nombre, String instructor, String horario) {
-        this.nombre = nombre;
-        this.instructor = instructor;
-        this.horario = horario;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getInstructor() {
-        return instructor;
-    }
-
-    public String getHorario() {
-        return horario;
-    }
-}
-
-class AsientoFrame extends JFrame {
+class ClassSeatFrame extends JFrame {
     private Clase clase;
-    private JButton[] asientos;
 
-    public AsientoFrame(Clase clase) {
+    public ClassSeatFrame(Clase clase) {
         this.clase = clase;
         setTitle("Seleccionar Asiento para " + clase.getNombre());
         setSize(400, 400);
@@ -245,18 +242,33 @@ class AsientoFrame extends JFrame {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         mainPanel.setBackground(new Color(20, 30, 48));
 
-        asientos = new JButton[25];
-        for (int i = 0; i < 25; i++) {
-            JButton asientoButton = new JButton("Asiento " + (i + 1));
-            asientoButton.setBackground(new Color(74, 189, 172));
-            asientoButton.setForeground(Color.WHITE);
-            asientoButton.setFocusPainted(false);
-            asientoButton.addActionListener(e -> {
-                JOptionPane.showMessageDialog(this, "Has seleccionado el " + asientoButton.getText() + " para la clase de " + clase.getNombre() + ".");
-                this.dispose();
-            });
-            asientos[i] = asientoButton;
-            mainPanel.add(asientoButton);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                final int fila = i;
+                final int columna = j;
+                final int seatNumber = fila * 5 + columna + 1;
+                JButton asientoButton = new JButton(String.valueOf(seatNumber));
+                String status = clase.getMapaAsientos()[fila][columna];
+                if ("OCUPADO".equals(status)) {
+                    asientoButton.setBackground(Color.RED);
+                    asientoButton.setEnabled(false);
+                } else {
+                    asientoButton.setBackground(new Color(74, 189, 172));
+                    asientoButton.setEnabled(true);
+                }
+                asientoButton.setForeground(Color.WHITE);
+                asientoButton.setFocusPainted(false);
+                asientoButton.addActionListener(e -> {
+                    if (!"OCUPADO".equals(clase.getMapaAsientos()[fila][columna])) {
+                        clase.reservarAsiento(fila, columna);
+                        asientoButton.setBackground(Color.RED);
+                        asientoButton.setEnabled(false);
+                        JOptionPane.showMessageDialog(this, "Has reservado el asiento " + seatNumber + " para la clase de " + clase.getNombre() + ".");
+                        this.dispose();
+                    }
+                });
+                mainPanel.add(asientoButton);
+            }
         }
         
         add(mainPanel);

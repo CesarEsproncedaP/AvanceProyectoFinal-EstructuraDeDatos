@@ -60,7 +60,29 @@ public class RegistroFrame extends JFrame {
         
         JButton registerButton = createStyledButton("Registrar", new Color(74, 189, 172), new Color(47, 128, 114));
         registerButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Usuario registrado con éxito");
+            String name = nameField.getText().trim();
+            String user = userField.getText().trim();
+            String pass = new String(passwordField.getPassword());
+            String confirm = new String(confirmPasswordField.getPassword());
+
+            if (name.isEmpty() || user.isEmpty() || pass.isEmpty() || confirm.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Todos los campos son requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!pass.equals(confirm)) {
+                JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (Main.users.containsKey(user)) {
+                JOptionPane.showMessageDialog(this, "El usuario ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Almacena el usuario (ignoramos 'name' por ahora, ya que no se usa en login)
+            Main.users.put(user, pass);
+            JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
             this.dispose();
             if (previousFrame != null) {
                 previousFrame.setVisible(true);
