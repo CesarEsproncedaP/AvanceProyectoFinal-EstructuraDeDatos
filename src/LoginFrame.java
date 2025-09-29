@@ -11,7 +11,7 @@ public class LoginFrame extends JFrame {
     private RegistroFrame registroFrame;
 
     public LoginFrame() {
-        setTitle("Iniciar Sesión - GYM MASTER");
+        setTitle("Iniciar Sesión - 67GYM"); 
         setSize(400, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +56,6 @@ public class LoginFrame extends JFrame {
         
         JButton registerButton = createStyledButton("Registrarse", new Color(255, 105, 180), new Color(200, 80, 140));
         registerButton.addActionListener(e -> {
-            // Oculta la ventana actual de login y muestra la de registro
             this.setVisible(false);
             if (registroFrame != null) {
                 registroFrame.setVisible(true);
@@ -85,17 +84,25 @@ public class LoginFrame extends JFrame {
             return;
         }
 
-        // Verifica contra el mapa de usuarios
         if (Main.users.containsKey(user) && Main.users.get(user).equals(password)) {
-            Main.currentUser = user;  // Setear el usuario actual
-            if (mainFrame != null) {
-                mainFrame.updateUserLabel();  // Actualizar el label en MainFrame
-            }
-            JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso!", "Bienvenido", JOptionPane.INFORMATION_MESSAGE);
-            this.setVisible(false);
-            if (mainFrame != null) {
+            Main.currentUser = user;
+            
+            try {
+                if (mainFrame == null) {
+                    mainFrame = new MainFrame(this);
+                }
+                
+                mainFrame.updateUserLabel();
+                
+                JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso!", "Bienvenido", JOptionPane.INFORMATION_MESSAGE);
+                this.dispose(); 
                 mainFrame.setVisible(true);
+                
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error crítico al cargar MainFrame. Revisar el constructor de MainFrame.java", "Error Fatal", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
+
         } else {
             JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos. Inténtelo de nuevo.", "Error de Inicio de Sesión", JOptionPane.ERROR_MESSAGE);
             userField.setText("");

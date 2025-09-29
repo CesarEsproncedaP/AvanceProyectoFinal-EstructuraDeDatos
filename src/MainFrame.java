@@ -10,7 +10,7 @@ public class MainFrame extends JFrame {
     
     public MainFrame(JFrame loginFrame) {
         this.loginFrame = loginFrame;
-        setTitle("Sistema de Gestión de Gimnasio - GYM MASTER");
+        setTitle("Sistema de Gestión de Gimnasio - 67GYM");
         setSize(850, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -19,20 +19,19 @@ public class MainFrame extends JFrame {
         mainPanel.setBackground(new Color(20, 30, 48));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
-        // Panel superior para el título y el usuario actual
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
-        JLabel titleLabel = new JLabel("GYM MASTER", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("67GYM", SwingConstants.CENTER);
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
         topPanel.add(titleLabel, BorderLayout.CENTER);
 
-        // Etiqueta para el usuario actual
         String userName = Main.currentUser != null ? Main.currentUser.substring(0, 1).toUpperCase() + Main.currentUser.substring(1) : "Invitado";
         userLabel = new JLabel("Usuario Actual: " + userName, SwingConstants.RIGHT);
-        userLabel.setForeground(Color.WHITE);
-        userLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        
+        userLabel.setForeground(new Color(255, 204, 0)); 
+        userLabel.setFont(new Font("Arial", Font.BOLD, 16)); 
         topPanel.add(userLabel, BorderLayout.NORTH);
 
         mainPanel.add(topPanel, BorderLayout.NORTH);

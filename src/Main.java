@@ -9,14 +9,19 @@ public class Main {
     private static Map<String, Empleado> hashEmpleados = new HashMap<>();
     private static List<Maquina> listaMaquinas = new ArrayList<>();
     private static List<Clase> clasesDisponibles = new ArrayList<>();
-    private static List<Clase> clasesProgramadas = new ArrayList<>();
-    private static Map<String, TareaPrioridad> hashTareas = new HashMap<>(); // Nueva tabla hash para tareas por ID
+    
+
+    private static Map<String, List<Clase>> clasesProgramadasPorUsuario = new HashMap<>(); 
+    
+    private static Map<String, TareaPrioridad> hashTareas = new HashMap<>(); 
     public static String currentUser = null; // Usuario actual logueado
 
     static {
         users.put("admin", "admin123");
 
-        // Empleados
+        users.put("clienteA", "passA");
+        users.put("clienteB", "passB"); 
+
         Empleado emp1 = new Empleado("E001", "Juan López", "Ventas");
         Empleado emp2 = new Empleado("E002", "María González", "Marketing");
         Empleado emp3 = new Empleado("E003", "Carlos Rivera", "Operaciones");
@@ -44,7 +49,7 @@ public class Main {
         hashEmpleados.put(emp7.getId(), emp7);
         hashEmpleados.put(emp8.getId(), emp8);
 
-        // Tareas con su descripción, fechas de entrega y tiempos estimados
+        
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             TareaPrioridad tarea1 = new TareaPrioridad("T001", "Limpiar area de pesas", sdf.parse("2025-09-01"), 2);
@@ -98,7 +103,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        // Máquinas
         listaMaquinas.add(new Maquina("M001", "Cinta de correr", "Operativa"));
         listaMaquinas.add(new Maquina("M002", "Bicicleta estática", "En reparación"));
         listaMaquinas.add(new Maquina("M003", "Máquina de remo", "Operativa"));
@@ -120,7 +124,7 @@ public class Main {
         listaMaquinas.add(new Maquina("M019", "Bicicleta de spinning", "Operativa"));
         listaMaquinas.add(new Maquina("M020", "Bicicleta de spinning", "Operativa"));
 
-        // Clases
+
         clasesDisponibles.add(new Clase("Yoga Avanzado", "Ana García", "Lunes 10:00 AM - 11:30 AM"));
         clasesDisponibles.add(new Clase("Zumba Fitness", "Sofía Cruz", "Lunes 12:00 PM - 1:30 PM"));
         clasesDisponibles.add(new Clase("Danza Aeróbica", "Sofía Cruz", "Lunes 6:00 PM - 7:30 PM"));
@@ -135,9 +139,19 @@ public class Main {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            LoginFrame loginFrame = new LoginFrame();
-            loginFrame.setFrames(new MainFrame(loginFrame), new RegistroFrame(loginFrame));
-            loginFrame.setVisible(true);
+            try {
+                LoginFrame loginFrame = new LoginFrame(); 
+                
+                MainFrame mainFrame = new MainFrame(loginFrame);
+                RegistroFrame registroFrame = new RegistroFrame(loginFrame); 
+                
+                loginFrame.setFrames(mainFrame, registroFrame); 
+                
+                loginFrame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Error al iniciar la aplicación. Asegúrate de que todas las clases Frame existen y compilan.");
+            }
         });
     }
 
@@ -146,17 +160,34 @@ public class Main {
     public static Map<String, Empleado> getHashEmpleados() { return hashEmpleados; }
     public static List<Maquina> getListaMaquinas() { return listaMaquinas; }
     public static List<Clase> getClasesDisponibles() { return clasesDisponibles; }
-    public static List<Clase> getClasesProgramadas() { return clasesProgramadas; }
     public static Map<String, TareaPrioridad> getHashTareas() { return hashTareas; }
 
-    // Método de ordenamiento para tareas
+
+    public static List<Clase> getClasesProgramadasUsuario() { 
+        if (currentUser == null) {
+            return new ArrayList<>(); 
+        }
+        return clasesProgramadasPorUsuario.getOrDefault(currentUser, new ArrayList<>()); 
+    }
+    
+
+    public static void addClaseProgramada(Clase clase) { 
+        if (currentUser == null) return; 
+
+        List<Clase> listaUsuario = clasesProgramadasPorUsuario.computeIfAbsent(currentUser, k -> new ArrayList<>());
+        
+        
+        if (!listaUsuario.contains(clase)) {
+            listaUsuario.add(clase);
+        }
+    }
+
     public static List<TareaPrioridad> ordenarTareasPorPrioridadYFecha(List<TareaPrioridad> tareas) {
         List<TareaPrioridad> sorted = new ArrayList<>(tareas);
         Collections.sort(sorted, Comparator.comparing(TareaPrioridad::getFechaEntrega));
         return sorted;
     }
 
-    // Búsqueda eficiente para tareas por ID para cuando se usa el hash
     public static TareaPrioridad buscarTareaPorId(String id) {
         return hashTareas.get(id);
     }

@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.Random;
 
 public class Clase {
@@ -11,15 +12,14 @@ public class Clase {
         this.instructor = instructor;
         this.horario = horario;
         this.mapaAsientos = new String[5][5];
-        inicializarAsientos();
+        inicializarAsientos(); 
     }
 
     private void inicializarAsientos() {
         Random rand = new Random();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                // Simular algunos asientos ocupados aleatoriamente
-                if (rand.nextInt(100) < 20) { // 20% de probabilidad de estar ocupado
+                if (rand.nextInt(100) < 20) { 
                     mapaAsientos[i][j] = "OCUPADO";
                 } else {
                     mapaAsientos[i][j] = "DISPONIBLE";
@@ -48,5 +48,18 @@ public class Clase {
     
     public String[][] getMapaAsientos() {
         return mapaAsientos;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Clase clase = (Clase) o;
+        return Objects.equals(nombre, clase.nombre) && Objects.equals(instructor, clase.instructor) && Objects.equals(horario, clase.horario);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre, instructor, horario);
     }
 }

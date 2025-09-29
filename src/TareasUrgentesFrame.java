@@ -13,6 +13,7 @@ public class TareasUrgentesFrame extends JFrame {
     private PriorityQueue<TareaPrioridad> colaTareas;
     private JFrame previousFrame;
     private static final Date CURRENT_DATE = new Date(); 
+    
     public TareasUrgentesFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Gestión de Tareas Urgentes - GYM MASTER");
@@ -32,6 +33,7 @@ public class TareasUrgentesFrame extends JFrame {
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
         topPanel.add(titleLabel, BorderLayout.CENTER);
+        
         JButton backButton = createStyledButton("Volver", new Color(255, 204, 0), new Color(200, 150, 0));
         backButton.addActionListener(e -> {
             this.dispose();
@@ -39,6 +41,7 @@ public class TareasUrgentesFrame extends JFrame {
                 previousFrame.setVisible(true);
             }
         });
+        
         JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         backButtonPanel.setOpaque(false);
         backButtonPanel.add(backButton);
@@ -63,11 +66,12 @@ public class TareasUrgentesFrame extends JFrame {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                c.setBackground(new Color(40, 40, 40)); // Se predeterminA un color para todas las filas
+                c.setBackground(new Color(40, 40, 40)); 
                 c.setForeground(Color.WHITE);
                 return c;
             }
         });
+        
         JScrollPane scrollPane = new JScrollPane(tareasTable);
         scrollPane.getViewport().setBackground(new Color(40, 40, 40));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -87,14 +91,12 @@ public class TareasUrgentesFrame extends JFrame {
         JButton deleteButton = createStyledButton("Eliminar Tarea", new Color(255, 50, 50), new Color(180, 30, 30));
         deleteButton.addActionListener(e -> eliminarTareaPorId());
 
-        JButton statsButton = createStyledButton("Calcular Estadísticas", new Color(138, 43, 226), new Color(100, 30, 180));
-        statsButton.addActionListener(e -> calcularEstadisticas());
-        
+
+
         bottomButtonPanel.add(showButton);
         bottomButtonPanel.add(takeNextButton);
         bottomButtonPanel.add(addButton);
         bottomButtonPanel.add(deleteButton);
-        bottomButtonPanel.add(statsButton);
 
         mainPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
 
@@ -109,7 +111,7 @@ public class TareasUrgentesFrame extends JFrame {
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             java.util.List<TareaPrioridad> listaTemporal = new java.util.ArrayList<>(colaTareas);
-            Collections.sort(listaTemporal, Comparator.comparing(TareaPrioridad::getFechaEntrega)); // Orden por fecha de entrega ascendente de tareas
+            Collections.sort(listaTemporal, Comparator.comparing(TareaPrioridad::getFechaEntrega)); 
             for (TareaPrioridad tarea : listaTemporal) {
                 tableModel.addRow(new Object[]{tarea.getId(), tarea.getDescripcion(), sdf.format(tarea.getFechaEntrega()), tarea.getTiempoEstimado()});
             }
@@ -174,7 +176,7 @@ public class TareasUrgentesFrame extends JFrame {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     Date nuevaFecha = sdf.parse(fechaStr);
                     int nuevoTiempo = Integer.parseInt(tiempoStr);
-                    String nuevoId = "T" + (colaTareas.size() + 1);
+                    String nuevoId = "T" + (Main.getHashTareas().size() + 1);
                     TareaPrioridad nuevaTarea = new TareaPrioridad(nuevoId, nuevaDescripcion, nuevaFecha, nuevoTiempo);
                     colaTareas.add(nuevaTarea);
                     Main.getHashTareas().put(nuevoId, nuevaTarea);
@@ -222,17 +224,8 @@ public class TareasUrgentesFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Por favor, ingresa un ID válido.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    private int calcularTiempoTotalRecursivo(List<TareaPrioridad> tareas, int index) {
-        if (index >= tareas.size()) return 0;
-        return tareas.get(index).getTiempoEstimado() + calcularTiempoTotalRecursivo(tareas, index + 1);
-    }
 
-    private void calcularEstadisticas() {
-        List<TareaPrioridad> tareasList = new ArrayList<>(colaTareas);
-        int tiempoTotal = calcularTiempoTotalRecursivo(tareasList, 0);
-        JOptionPane.showMessageDialog(this, "Tiempo estimado total para completar tareas: " + tiempoTotal + " horas", "Estadísticas", JOptionPane.INFORMATION_MESSAGE);
-    }
+
 
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
         JButton button = new JButton(text);

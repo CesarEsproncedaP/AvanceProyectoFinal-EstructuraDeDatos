@@ -13,7 +13,6 @@ public class TareaPrioridad implements Comparable<TareaPrioridad> {
         this.tiempoEstimado = tiempoEstimado;
     }
 
-    // Comparable priorizando fecha de entrega (más cercana primero)
     @Override
     public int compareTo(TareaPrioridad otra) {
         return this.fechaEntrega.compareTo(otra.fechaEntrega);

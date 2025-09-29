@@ -76,7 +76,6 @@ public class CambiarEstadoDialog extends JDialog {
         cargarMaquinas();
     }
     
-    // Nuevo método para obtener el estado del cambio
     public boolean isStateChanged() {
         return stateChanged;
     }

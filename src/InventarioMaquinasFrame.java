@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 public class InventarioMaquinasFrame extends JFrame {
     private JTable maquinasTable;
     private DefaultTableModel tableModel;
-    private List<Maquina> listaMaquinas;
     private JFrame previousFrame;
     private String currentFilter = "Todas";
 
@@ -19,28 +18,6 @@ public class InventarioMaquinasFrame extends JFrame {
         setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        listaMaquinas = new ArrayList<>();
-        listaMaquinas.add(new Maquina("M001", "Cinta de correr", "Operativa"));
-        listaMaquinas.add(new Maquina("M002", "Bicicleta estática", "En reparación"));
-        listaMaquinas.add(new Maquina("M003", "Máquina de remo", "Operativa"));
-        listaMaquinas.add(new Maquina("M004", "Elíptica", "Operativa"));
-        listaMaquinas.add(new Maquina("M005", "Prensa de piernas", "Operativa"));
-        listaMaquinas.add(new Maquina("M006", "Polea alta", "En reparación"));
-        listaMaquinas.add(new Maquina("M007", "Banco de pesas", "Operativa"));
-        listaMaquinas.add(new Maquina("M008", "Máquina de abdominales", "Operativa"));
-        listaMaquinas.add(new Maquina("M009", "Stepper", "En reparación"));
-        listaMaquinas.add(new Maquina("M010", "Rack de sentadillas", "Operativa"));
-        listaMaquinas.add(new Maquina("M011", "Maquina Smith", "Operativa"));
-        listaMaquinas.add(new Maquina("M012", "Jaula de potencia", "Operativa"));
-        listaMaquinas.add(new Maquina("M013", "Pesas rusas", "Operativa"));
-        listaMaquinas.add(new Maquina("M014", "Barra de dominadas", "Operativa"));
-        listaMaquinas.add(new Maquina("M015", "Maquina de remo", "En reparación"));
-        listaMaquinas.add(new Maquina("M016", "Bicicleta de spinning", "Operativa"));
-        listaMaquinas.add(new Maquina("M017", "Bicicleta de spinning", "Operativa"));
-        listaMaquinas.add(new Maquina("M018", "Bicicleta de spinning", "Operativa"));
-        listaMaquinas.add(new Maquina("M019", "Bicicleta de spinning", "Operativa"));
-        listaMaquinas.add(new Maquina("M020", "Bicicleta de spinning", "Operativa"));
 
         JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
         mainPanel.setBackground(new Color(26, 26, 26));
@@ -108,10 +85,19 @@ public class InventarioMaquinasFrame extends JFrame {
 
         JButton changeStateButton = createStyledButton("Cambiar Estado", new Color(138, 43, 226), new Color(100, 30, 180));
         changeStateButton.addActionListener(e -> {
-            CambiarEstadoDialog dialog = new CambiarEstadoDialog(this, listaMaquinas);
+            
+            if (!"admin".equalsIgnoreCase(Main.currentUser)) {
+                JOptionPane.showMessageDialog(this, 
+                                              "Acceso denegado. Solo el usuario 'admin' tiene permiso para cambiar el estado de las máquinas.", 
+                                              "Permiso Requerido", 
+                                              JOptionPane.ERROR_MESSAGE);
+                return; 
+            }
+
+            CambiarEstadoDialog dialog = new CambiarEstadoDialog(this, Main.getListaMaquinas());
             dialog.setVisible(true); 
-            if (dialog.isStateChanged()) { // Verifica si se realizó un cambio antes de cerrar
-                refreshAndResetFilter(); // Refresca
+            if (dialog.isStateChanged()) { 
+                refreshAndResetFilter(); 
             }
         });
 
@@ -126,9 +112,20 @@ public class InventarioMaquinasFrame extends JFrame {
         refreshTable();
     }
 
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            currentFilter = "Todas";
+            refreshTable();
+        }
+        super.setVisible(b);
+    }
+    
     public void refreshTable() {
+        List<Maquina> maquinasActuales = Main.getListaMaquinas();
+        
         tableModel.setRowCount(0);
-        List<Maquina> maquinasFiltradas = listaMaquinas.stream()
+        List<Maquina> maquinasFiltradas = maquinasActuales.stream()
             .filter(m -> currentFilter.equals("Todas") || m.getEstado().equals(currentFilter))
             .collect(Collectors.toList());
 

@@ -24,12 +24,11 @@ public class TareasFrame extends JFrame {
         agregarButton.setForeground(Color.WHITE);
         agregarButton.setFocusPainted(false);
 
-        // Agrega un listener para guardar la tarea
         agregarButton.addActionListener(e -> {
             String nuevaTarea = tareaTextField.getText();
             if (!nuevaTarea.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Tarea agregada: " + nuevaTarea);
-                tareaTextField.setText(""); // Limpia el campo
+                tareaTextField.setText("");
             } else {
                 JOptionPane.showMessageDialog(this, "Por favor, ingresa una tarea.");
             }

@@ -13,8 +13,9 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ClasesProgramadasFrame extends JFrame {
-    private List<Clase> clasesDisponibles;
-    private List<Clase> clasesProgramadas;
+    
+    private List<Clase> clasesDisponibles; 
+    
     private JTable table;
     private DefaultTableModel tableModel;
     private JFrame previousFrame;
@@ -26,7 +27,9 @@ public class ClasesProgramadasFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
-        GradientPanel mainPanel = new GradientPanel(new Color(20, 30, 48), new Color(36, 59, 85));
+        JPanel mainPanel = new JPanel(); 
+        mainPanel.setBackground(new Color(20, 30, 48)); 
+        
         mainPanel.setLayout(new BorderLayout(20, 20));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
@@ -53,21 +56,8 @@ public class ClasesProgramadasFrame extends JFrame {
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        clasesDisponibles = new ArrayList<>();
-        clasesProgramadas = new ArrayList<>();
+        clasesDisponibles = Main.getClasesDisponibles(); 
 
-        clasesDisponibles.add(new Clase("Yoga Avanzado", "Ana García", "Lunes 10:00 AM - 11:30 AM"));
-        clasesDisponibles.add(new Clase("Zumba Fitness", "Sofía Cruz", "Lunes 12:00 PM - 1:30 PM"));
-        clasesDisponibles.add(new Clase("Danza Aeróbica", "Sofía Cruz", "Lunes 6:00 PM - 7:30 PM"));
-        clasesDisponibles.add(new Clase("Spinning Intenso", "Luis Pérez", "Martes 8:00 PM - 9:30 PM"));
-        clasesDisponibles.add(new Clase("Pilates Mat", "Ana García", "Miércoles 6:00 AM - 7:00 AM"));
-        clasesDisponibles.add(new Clase("Levantamiento Olímpico", "Pedro Díaz", "Miércoles 9:00 AM - 10:00 AM"));
-        clasesDisponibles.add(new Clase("Cardio Extremo", "Luis Pérez", "Jueves 7:00 PM - 8:00 PM"));
-        clasesDisponibles.add(new Clase("Funcional HIIT", "Marta Gómez", "Jueves 9:00 AM - 10:00 AM"));
-        clasesDisponibles.add(new Clase("Boxeo Fit", "Roberto Estrada", "Viernes 9:00 AM - 10:00 AM"));
-        clasesDisponibles.add(new Clase("Cross Training", "Ximena Cavazos", "Sábado 11:00 AM - 12:00 PM"));
-
-        // Ordenar por día y luego por hora de inicio
         Map<String, Integer> dayOrder = new HashMap<>();
         dayOrder.put("Lunes", 1);
         dayOrder.put("Martes", 2);
@@ -87,6 +77,7 @@ public class ClasesProgramadasFrame extends JFrame {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mma").withLocale(Locale.ENGLISH);
             return LocalTime.parse(horaInicio.toUpperCase(), formatter);
         }));
+        // Fin de la lógica de ordenamiento
 
         String[] columnNames = {"Instructor", "Clase", "Horario"};
         Object[][] data = new Object[clasesDisponibles.size()][3];
@@ -124,7 +115,8 @@ public class ClasesProgramadasFrame extends JFrame {
         selectButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
-                new ClassSeatFrame(clasesDisponibles.get(selectedRow)).setVisible(true);
+                // Abre la ventana de asientos. El estado de la clase (asientos ocupados).
+                new ClassSeatFrame(clasesDisponibles.get(selectedRow)).setVisible(true); 
             } else {
                 JOptionPane.showMessageDialog(this, "Por favor, selecciona una clase de la tabla.", "Selecciona una clase", JOptionPane.WARNING_MESSAGE);
             }
@@ -148,25 +140,27 @@ public class ClasesProgramadasFrame extends JFrame {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
             Clase claseAProgramar = clasesDisponibles.get(selectedRow);
-            clasesProgramadas.add(claseAProgramar);
-            JOptionPane.showMessageDialog(this, "Clase de " + claseAProgramar.getNombre() + " programada con éxito.", "Clase Programada", JOptionPane.INFORMATION_MESSAGE);
+            
+            Main.addClaseProgramada(claseAProgramar); 
+            
+            JOptionPane.showMessageDialog(this, "Clase de " + claseAProgramar.getNombre() + " programada con éxito para el usuario actual.", "Clase Programada", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Por favor, selecciona una clase para programar.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
     private void mostrarClasesProgramadas() {
-        if (clasesProgramadas.isEmpty()) {
+        List<Clase> clasesProgramadas = Main.getClasesProgramadasUsuario();
+        
+        if (clasesProgramadas.isEmpty()) { 
             JOptionPane.showMessageDialog(this, "No has programado ninguna clase aún.", "Mis Clases", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        // Crear una nueva ventana para mostrar la tabla de clases programadas
         JDialog dialog = new JDialog(this, "Mis Clases Programadas", true);
         dialog.setSize(500, 300);
         dialog.setLocationRelativeTo(this);
 
-        // Crear el modelo de la tabla con los datos
         DefaultTableModel programadasTableModel = new DefaultTableModel(new Object[]{"Clase", "Instructor", "Horario"}, 0);
         for (Clase clase : clasesProgramadas) {
             programadasTableModel.addRow(new Object[]{clase.getNombre(), clase.getInstructor(), clase.getHorario()});
@@ -193,16 +187,12 @@ public class ClasesProgramadasFrame extends JFrame {
             private boolean hovered = false;
             @Override
             protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                int w = getWidth();
-                int h = getHeight();
-                Color c1 = hovered ? hoverColor.brighter() : baseColor;
-                Color c2 = hovered ? hoverColor.darker() : baseColor.darker();
-                GradientPaint gp = new GradientPaint(0, 0, c1, w, h, c2); 
-                g2.setPaint(gp);
-                g2.fillRect(0, 0, w, h);
-                g2.dispose();
+                if (hovered) {
+                    g.setColor(hoverColor);
+                } else {
+                    g.setColor(baseColor);
+                }
+                g.fillRect(0, 0, getWidth(), getHeight());
                 super.paintComponent(g);
             }
             @Override
@@ -225,52 +215,5 @@ public class ClasesProgramadasFrame extends JFrame {
         button.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
-    }
-}
-
-class ClassSeatFrame extends JFrame {
-    private Clase clase;
-
-    public ClassSeatFrame(Clase clase) {
-        this.clase = clase;
-        setTitle("Seleccionar Asiento para " + clase.getNombre());
-        setSize(400, 400);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
-        JPanel mainPanel = new JPanel(new GridLayout(5, 5, 10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        mainPanel.setBackground(new Color(20, 30, 48));
-
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                final int fila = i;
-                final int columna = j;
-                final int seatNumber = fila * 5 + columna + 1;
-                JButton asientoButton = new JButton(String.valueOf(seatNumber));
-                String status = clase.getMapaAsientos()[fila][columna];
-                if ("OCUPADO".equals(status)) {
-                    asientoButton.setBackground(Color.RED);
-                    asientoButton.setEnabled(false);
-                } else {
-                    asientoButton.setBackground(new Color(74, 189, 172));
-                    asientoButton.setEnabled(true);
-                }
-                asientoButton.setForeground(Color.WHITE);
-                asientoButton.setFocusPainted(false);
-                asientoButton.addActionListener(e -> {
-                    if (!"OCUPADO".equals(clase.getMapaAsientos()[fila][columna])) {
-                        clase.reservarAsiento(fila, columna);
-                        asientoButton.setBackground(Color.RED);
-                        asientoButton.setEnabled(false);
-                        JOptionPane.showMessageDialog(this, "Has reservado el asiento " + seatNumber + " para la clase de " + clase.getNombre() + ".");
-                        this.dispose();
-                    }
-                });
-                mainPanel.add(asientoButton);
-            }
-        }
-        
-        add(mainPanel);
     }
 }
