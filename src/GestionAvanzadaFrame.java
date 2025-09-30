@@ -9,8 +9,7 @@ import javax.swing.border.TitledBorder;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.SimpleDateFormat;
-
-
+import java.util.Comparator; // Importación necesaria para Collections.sort si se usa, aunque aquí se llama TaskOptimizer.mergeSort
 
 public class GestionAvanzadaFrame extends JFrame {
     private ArbolBinarioEmpleados arbolEmpleados;
@@ -239,7 +238,8 @@ public class GestionAvanzadaFrame extends JFrame {
         displayArea.setEditable(false);
         displayArea.setBackground(new Color(30, 30, 30));
         displayArea.setForeground(new Color(200, 200, 200));
-        displayArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
+        // Usamos Monospaced para asegurar la alineación de las columnas
+        displayArea.setFont(new Font("Monospaced", Font.PLAIN, 15)); 
         
         displayArea.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(accent, 3), "Estadísticas y Optimización de Tareas", 
@@ -252,6 +252,7 @@ public class GestionAvanzadaFrame extends JFrame {
         JPanel buttonGridPanel = new JPanel(new GridLayout(1, 2, 25, 0)); 
         buttonGridPanel.setOpaque(false);
 
+        // --- Botón 1: Calcular Estadísticas (Recursividad) ---
         JButton calcButton = createStyledButton("Calcular Estadísticas (Rec.)", accent, accent.darker());
         calcButton.addActionListener(e -> {
             PriorityQueue<TareaPrioridad> cola = Main.getColaTareas();
@@ -261,13 +262,17 @@ public class GestionAvanzadaFrame extends JFrame {
             }
             List<TareaPrioridad> listaTareas = new ArrayList<>(cola);
             double totalTiempo = Main.calcularTiempoTotalRecursivo(listaTareas, 0); 
+            
+            // FORMATO MEJORADO PARA LA RECURSIVIDAD
             displayArea.setText("ESTADÍSTICAS RECURSIVAS:\n");
-            displayArea.append("Total de tiempo estimado para las tareas restantes: " + String.format("%.0f", totalTiempo) + " horas.\n");
-            displayArea.append("Número de tareas restantes: " + listaTareas.size() + "\n");
             displayArea.append("--------------------------------------------------------\n");
-            displayArea.append("Presione 'Optimizar Distribución' para ordenar las tareas por duración.");
+            displayArea.append(String.format("Número de tareas restantes: %d\n", listaTareas.size()));
+            displayArea.append(String.format("Tiempo total estimado:      %.0f horas\n", totalTiempo));
+            displayArea.append("--------------------------------------------------------\n");
+            displayArea.append("Presione 'Optimizar Distribución (D&V)' para ordenar.");
         });
         
+        // --- Botón 2: Optimización (Divide y Vencerás) ---
         JButton optimizeButton = createStyledButton("Optimizar Distribución (D&V)", accent, accent.darker());
         optimizeButton.addActionListener(e -> {
             PriorityQueue<TareaPrioridad> cola = Main.getColaTareas();
@@ -277,24 +282,32 @@ public class GestionAvanzadaFrame extends JFrame {
             }
             
             List<TareaPrioridad> tareasParaOptimizar = new ArrayList<>(cola);
+            // Llama al algoritmo Merge Sort (Divide y Vencerás)
             TaskOptimizer.mergeSort(tareasParaOptimizar);
             
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             displayArea.setText("OPTIMIZACIÓN DE TAREAS (Divide y Vencerás):\n");
             displayArea.append("Tareas ordenadas por Tiempo Estimado (de menor a mayor).\n");
-            displayArea.append("----------------------------------------------------------------------\n");
+            displayArea.append("------------------------------------------------------------------------------------------------\n");
+            
+            // ENCABEZADOS DE COLUMNA ALINEADOS
+            displayArea.append(String.format("%-4s | %-40s | %-8s | %s\n", 
+                                            "No.", "DESCRIPCIÓN", "TIEMPO", "FECHA LÍMITE"));
+            displayArea.append("------------------------------------------------------------------------------------------------\n");
             
             for (int i = 0; i < tareasParaOptimizar.size(); i++) {
                 TareaPrioridad tarea = tareasParaOptimizar.get(i);
                 
-                displayArea.append(String.format("%02d. [%-25s] Tiempo: %-4d hrs | Fecha Límite: %s\n", 
-                                                i + 1, 
+                // FORMATO MEJORADO PARA ALINEAR
+                displayArea.append(String.format("%-4s | %-40s | %-8d | %s\n", 
+                                                (i + 1) + ".",
                                                 tarea.getDescripcion(),        
                                                 tarea.getTiempoEstimado(),     
                                                 sdf.format(tarea.getFechaEntrega())));    
             }
-            displayArea.append("\n**Uso:** La lista ayuda a balancear la carga de trabajo, asignando\n");
-            displayArea.append("las tareas más cortas primero o identificando cuellos de botella.");
+            displayArea.append("------------------------------------------------------------------------------------------------\n");
+            displayArea.append("**Uso:** La lista ayuda a balancear la carga de trabajo, asignando las\n");
+            displayArea.append("tareas más cortas primero o identificando cuellos de botella.");
         });
         
         buttonGridPanel.add(calcButton);
