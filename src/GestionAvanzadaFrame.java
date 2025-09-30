@@ -4,11 +4,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
+
 import javax.swing.border.TitledBorder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GestionAvanzadaFrame extends JFrame {
-    private ArbolBinarioEmpleados arbolEmpleados = new ArbolBinarioEmpleados();
-    private Map<String, Empleado> hashEmpleados = new HashMap<>();
+    private ArbolBinarioEmpleados arbolEmpleados;
+    private Map<String, Empleado> hashEmpleados;
     
     private GradientPanel mainPanel; 
     private JFrame previousFrame;
@@ -20,6 +24,9 @@ public class GestionAvanzadaFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
+        arbolEmpleados = Main.getArbolEmpleados();  // Usar el árbol global de Main
+        hashEmpleados = Main.getHashEmpleados();  // Usar la hash global de Main
+
         Color gradientStart = new Color(30, 30, 30);
         Color gradientEnd = new Color(50, 70, 90);
         
@@ -28,17 +35,21 @@ public class GestionAvanzadaFrame extends JFrame {
         
         Color arbolAccent = new Color(100, 255, 200);
         Color hashAccent = new Color(255, 100, 100);
+        Color colasAccent = new Color(150, 100, 255);
         
         JPanel arbolPanel = createArbolPanel(mainPanel.getBackground(), arbolAccent); 
         JPanel hashPanel = createHashPanel(mainPanel.getBackground(), hashAccent); 
+        JPanel colasPanel = createColasPanel(mainPanel.getBackground(), colasAccent);
         
         mainPanel.add(arbolPanel, "Arboles");
         mainPanel.add(hashPanel, "Hashes");
+        mainPanel.add(colasPanel, "Colas");
 
         JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 25));
         navPanel.setOpaque(false);
         JButton arbolButton = createStyledButton("Árboles Binarios", arbolAccent, arbolAccent.darker());
         JButton hashButton = createStyledButton("Tablas Hash", hashAccent, hashAccent.darker());
+        JButton colasButton = createStyledButton("Colas de Prioridad", colasAccent, colasAccent.darker());
         JButton backButton = createStyledButton("Volver", new Color(255, 105, 180), new Color(200, 80, 140));
         
         arbolButton.addActionListener(e -> {
@@ -50,6 +61,11 @@ public class GestionAvanzadaFrame extends JFrame {
             CardLayout cl = (CardLayout) mainPanel.getLayout();
             cl.show(mainPanel, "Hashes");
         });
+        
+        colasButton.addActionListener(e -> {
+            CardLayout cl = (CardLayout) mainPanel.getLayout();
+            cl.show(mainPanel, "Colas");
+        });
 
         backButton.addActionListener(e -> {
             this.dispose();
@@ -60,6 +76,7 @@ public class GestionAvanzadaFrame extends JFrame {
 
         navPanel.add(arbolButton);
         navPanel.add(hashButton);
+        navPanel.add(colasButton);
         navPanel.add(backButton);
 
         GradientPanel containerPanel = new GradientPanel(gradientStart, gradientEnd); 
@@ -70,33 +87,6 @@ public class GestionAvanzadaFrame extends JFrame {
         containerPanel.add(mainPanel, BorderLayout.CENTER);
         
         add(containerPanel);
-        
-        Empleado emp1 = new Empleado("E001", "Juan López", "Ventas");
-        Empleado emp2 = new Empleado("E002", "María González", "Marketing");
-        Empleado emp3 = new Empleado("E003", "Carlos Rivera", "Operaciones");
-        Empleado emp4 = new Empleado("E004", "Laura Flores", "Ventas");
-        Empleado emp5 = new Empleado("E005", "Roberto Sánchez", "Limpieza");
-        Empleado emp6 = new Empleado("E006", "Sofía Mendoza", "Marketing");
-        Empleado emp7 = new Empleado("E007", "Andrés Castro", "Mantenimiento");
-        Empleado emp8 = new Empleado("E008", "Isabel Pérez", "Ventas");
-        
-        arbolEmpleados.insertar(emp1);
-        arbolEmpleados.insertar(emp2);
-        arbolEmpleados.insertar(emp3);
-        arbolEmpleados.insertar(emp4);
-        arbolEmpleados.insertar(emp5);
-        arbolEmpleados.insertar(emp6);
-        arbolEmpleados.insertar(emp7);
-        arbolEmpleados.insertar(emp8);
-
-        hashEmpleados.put(emp1.getId(), emp1);
-        hashEmpleados.put(emp2.getId(), emp2);
-        hashEmpleados.put(emp3.getId(), emp3);
-        hashEmpleados.put(emp4.getId(), emp4);
-        hashEmpleados.put(emp5.getId(), emp5);
-        hashEmpleados.put(emp6.getId(), emp6);
-        hashEmpleados.put(emp7.getId(), emp7);
-        hashEmpleados.put(emp8.getId(), emp8);
     }
     
     private JPanel createArbolPanel(Color bg, Color accent) {
@@ -215,6 +205,50 @@ public class GestionAvanzadaFrame extends JFrame {
         
         buttonPanel.add(searchEmpButton);
         buttonPanel.add(showAllButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private JPanel createColasPanel(Color bg, Color accent) {
+        JPanel panel = new JPanel(new BorderLayout(20, 20));
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+        JLabel title = createTitleLabel("Gestión de Tareas (Colas de Prioridad)", accent);
+        panel.add(title, BorderLayout.NORTH);
+
+        JTextArea displayArea = new JTextArea();
+        displayArea.setEditable(false);
+        displayArea.setBackground(new Color(30, 30, 30));
+        displayArea.setForeground(new Color(200, 200, 200));
+        displayArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
+        displayArea.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(accent, 3), "Estadísticas de Tareas", 
+                TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, 
+                new Font("Arial", Font.BOLD, 16), Color.WHITE));
+        
+        JScrollPane scroll = new JScrollPane(displayArea);
+        panel.add(scroll, BorderLayout.CENTER);
+        
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 15));
+        buttonPanel.setOpaque(false);
+
+        JButton calcButton = createStyledButton("Calcular Estadísticas", accent, accent.darker());
+        calcButton.addActionListener(e -> {
+            PriorityQueue<TareaPrioridad> cola = Main.getColaTareas();
+            if (cola.isEmpty()) {
+                displayArea.setText("No hay tareas restantes en la cola.");
+                return;
+            }
+            // Copiar a lista para no modificar la cola original
+            List<TareaPrioridad> listaTareas = new ArrayList<>(cola);
+            int totalTiempo = Main.calcularTiempoTotalRecursivo(listaTareas, 0);
+            displayArea.setText("Total de tiempo estimado para las tareas restantes: " + totalTiempo + " horas.\n\n");
+            displayArea.append("Número de tareas restantes: " + listaTareas.size());
+        });
+        
+        buttonPanel.add(calcButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
         return panel;

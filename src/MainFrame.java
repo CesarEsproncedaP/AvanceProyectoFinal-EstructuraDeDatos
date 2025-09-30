@@ -7,7 +7,7 @@ public class MainFrame extends JFrame {
 
     private JFrame loginFrame;
     private JLabel userLabel;  
-    
+
     public MainFrame(JFrame loginFrame) {
         this.loginFrame = loginFrame;
         setTitle("Sistema de Gestión de Gimnasio - 67GYM");
@@ -29,7 +29,6 @@ public class MainFrame extends JFrame {
 
         String userName = Main.currentUser != null ? Main.currentUser.substring(0, 1).toUpperCase() + Main.currentUser.substring(1) : "Invitado";
         userLabel = new JLabel("Usuario Actual: " + userName, SwingConstants.RIGHT);
-        
         userLabel.setForeground(new Color(255, 204, 0)); 
         userLabel.setFont(new Font("Arial", Font.BOLD, 16)); 
         topPanel.add(userLabel, BorderLayout.NORTH);
@@ -41,9 +40,13 @@ public class MainFrame extends JFrame {
 
         JButton tareasButton = createStyledButton("Tareas Urgentes", new Color(74, 189, 172));
         tareasButton.addActionListener(e -> {
-            TareasUrgentesFrame tareasFrame = new TareasUrgentesFrame(this);
-            tareasFrame.setVisible(true);
-            this.setVisible(false);
+            if ("admin".equalsIgnoreCase(Main.currentUser)) {
+                TareasUrgentesFrame tareasFrame = new TareasUrgentesFrame(this);
+                tareasFrame.setVisible(true);
+                this.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "Acceso denegado. Solo el usuario 'admin' puede acceder a Tareas Urgentes.", "Permiso Requerido", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         JButton clasesButton = createStyledButton("Clases Programadas", new Color(255, 105, 180));
