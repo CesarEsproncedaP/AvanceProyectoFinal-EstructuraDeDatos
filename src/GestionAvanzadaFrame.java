@@ -5,14 +5,17 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
-
 import javax.swing.border.TitledBorder;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.SimpleDateFormat;
+
+
 
 public class GestionAvanzadaFrame extends JFrame {
     private ArbolBinarioEmpleados arbolEmpleados;
     private Map<String, Empleado> hashEmpleados;
+    private PriorityQueue<TareaPrioridad> colaTareas;
     
     private GradientPanel mainPanel; 
     private JFrame previousFrame;
@@ -20,22 +23,23 @@ public class GestionAvanzadaFrame extends JFrame {
     public GestionAvanzadaFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Gestión Avanzada del Gimnasio");
-        setSize(950, 700);
+        
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
-        arbolEmpleados = Main.getArbolEmpleados();  // Usar el árbol global de Main
-        hashEmpleados = Main.getHashEmpleados();  // Usar la hash global de Main
-
+        arbolEmpleados = Main.getArbolEmpleados();  
+        hashEmpleados = Main.getHashEmpleados(); 
+        colaTareas = Main.getColaTareas(); 
+        
         Color gradientStart = new Color(30, 30, 30);
         Color gradientEnd = new Color(50, 70, 90);
-        
-        mainPanel = new GradientPanel(gradientStart, gradientEnd);
-        mainPanel.setLayout(new CardLayout());
         
         Color arbolAccent = new Color(100, 255, 200);
         Color hashAccent = new Color(255, 100, 100);
         Color colasAccent = new Color(150, 100, 255);
+        
+        mainPanel = new GradientPanel(gradientStart, gradientEnd);
+        mainPanel.setLayout(new CardLayout());
         
         JPanel arbolPanel = createArbolPanel(mainPanel.getBackground(), arbolAccent); 
         JPanel hashPanel = createHashPanel(mainPanel.getBackground(), hashAccent); 
@@ -55,16 +59,22 @@ public class GestionAvanzadaFrame extends JFrame {
         arbolButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) mainPanel.getLayout();
             cl.show(mainPanel, "Arboles");
+            mainPanel.revalidate(); 
+            mainPanel.repaint();
         });
         
         hashButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) mainPanel.getLayout();
             cl.show(mainPanel, "Hashes");
+            mainPanel.revalidate(); 
+            mainPanel.repaint();
         });
         
         colasButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) mainPanel.getLayout();
             cl.show(mainPanel, "Colas");
+            mainPanel.revalidate(); 
+            mainPanel.repaint(); 
         });
 
         backButton.addActionListener(e -> {
@@ -87,8 +97,13 @@ public class GestionAvanzadaFrame extends JFrame {
         containerPanel.add(mainPanel, BorderLayout.CENTER);
         
         add(containerPanel);
+        
+        this.pack();
+        setSize(1000, 750); 
     }
     
+
+
     private JPanel createArbolPanel(Color bg, Color accent) {
         JPanel panel = new JPanel(new BorderLayout(20, 20)); 
         panel.setOpaque(false); 
@@ -121,7 +136,7 @@ public class GestionAvanzadaFrame extends JFrame {
             } else {
                  displayArea.append("ID     | NOMBRE                  | DEPARTAMENTO\n");
                  displayArea.append("--------------------------------------------------------\n");
-                 arbolEmpleados.mostrarInorden(arbolEmpleados.getRaiz(), displayArea);
+                 arbolEmpleados.mostrarInorden(arbolEmpleados.getRaiz(), displayArea); 
             }
         });
 
@@ -132,7 +147,7 @@ public class GestionAvanzadaFrame extends JFrame {
                 displayArea.setText("Resultados para Departamento: " + depto + "\n");
                 displayArea.append("--------------------------------------------------------\n");
                 int initialLength = displayArea.getText().length();
-                arbolEmpleados.buscarPorDepartamento(arbolEmpleados.getRaiz(), depto, displayArea);
+                arbolEmpleados.buscarPorDepartamento(arbolEmpleados.getRaiz(), depto, displayArea); 
                 if (displayArea.getText().length() == initialLength) {
                      displayArea.append("No se encontraron empleados en el departamento '" + depto + "'.\n");
                 }
@@ -209,6 +224,8 @@ public class GestionAvanzadaFrame extends JFrame {
 
         return panel;
     }
+    
+    
 
     private JPanel createColasPanel(Color bg, Color accent) {
         JPanel panel = new JPanel(new BorderLayout(20, 20));
@@ -223,37 +240,77 @@ public class GestionAvanzadaFrame extends JFrame {
         displayArea.setBackground(new Color(30, 30, 30));
         displayArea.setForeground(new Color(200, 200, 200));
         displayArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
+        
         displayArea.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(accent, 3), "Estadísticas de Tareas", 
+                BorderFactory.createLineBorder(accent, 3), "Estadísticas y Optimización de Tareas", 
                 TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, 
                 new Font("Arial", Font.BOLD, 16), Color.WHITE));
         
         JScrollPane scroll = new JScrollPane(displayArea);
         panel.add(scroll, BorderLayout.CENTER);
         
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 15));
-        buttonPanel.setOpaque(false);
+        JPanel buttonGridPanel = new JPanel(new GridLayout(1, 2, 25, 0)); 
+        buttonGridPanel.setOpaque(false);
 
-        JButton calcButton = createStyledButton("Calcular Estadísticas", accent, accent.darker());
+        JButton calcButton = createStyledButton("Calcular Estadísticas (Rec.)", accent, accent.darker());
         calcButton.addActionListener(e -> {
             PriorityQueue<TareaPrioridad> cola = Main.getColaTareas();
             if (cola.isEmpty()) {
                 displayArea.setText("No hay tareas restantes en la cola.");
                 return;
             }
-            // Copiar a lista para no modificar la cola original
             List<TareaPrioridad> listaTareas = new ArrayList<>(cola);
-            int totalTiempo = Main.calcularTiempoTotalRecursivo(listaTareas, 0);
-            displayArea.setText("Total de tiempo estimado para las tareas restantes: " + totalTiempo + " horas.\n\n");
-            displayArea.append("Número de tareas restantes: " + listaTareas.size());
+            double totalTiempo = Main.calcularTiempoTotalRecursivo(listaTareas, 0); 
+            displayArea.setText("ESTADÍSTICAS RECURSIVAS:\n");
+            displayArea.append("Total de tiempo estimado para las tareas restantes: " + String.format("%.0f", totalTiempo) + " horas.\n");
+            displayArea.append("Número de tareas restantes: " + listaTareas.size() + "\n");
+            displayArea.append("--------------------------------------------------------\n");
+            displayArea.append("Presione 'Optimizar Distribución' para ordenar las tareas por duración.");
         });
         
-        buttonPanel.add(calcButton);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
+        JButton optimizeButton = createStyledButton("Optimizar Distribución (D&V)", accent, accent.darker());
+        optimizeButton.addActionListener(e -> {
+            PriorityQueue<TareaPrioridad> cola = Main.getColaTareas();
+            if (cola.isEmpty()) {
+                displayArea.setText("No hay tareas para optimizar.");
+                return;
+            }
+            
+            List<TareaPrioridad> tareasParaOptimizar = new ArrayList<>(cola);
+            TaskOptimizer.mergeSort(tareasParaOptimizar);
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            displayArea.setText("OPTIMIZACIÓN DE TAREAS (Divide y Vencerás):\n");
+            displayArea.append("Tareas ordenadas por Tiempo Estimado (de menor a mayor).\n");
+            displayArea.append("----------------------------------------------------------------------\n");
+            
+            for (int i = 0; i < tareasParaOptimizar.size(); i++) {
+                TareaPrioridad tarea = tareasParaOptimizar.get(i);
+                
+                displayArea.append(String.format("%02d. [%-25s] Tiempo: %-4d hrs | Fecha Límite: %s\n", 
+                                                i + 1, 
+                                                tarea.getDescripcion(),        
+                                                tarea.getTiempoEstimado(),     
+                                                sdf.format(tarea.getFechaEntrega())));    
+            }
+            displayArea.append("\n**Uso:** La lista ayuda a balancear la carga de trabajo, asignando\n");
+            displayArea.append("las tareas más cortas primero o identificando cuellos de botella.");
+        });
+        
+        buttonGridPanel.add(calcButton);
+        buttonGridPanel.add(optimizeButton); 
+        
+        JPanel buttonWrapperPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        buttonWrapperPanel.setOpaque(false);
+        buttonWrapperPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0)); // Espacio superior
+        buttonWrapperPanel.add(buttonGridPanel);
+        
+        panel.add(buttonWrapperPanel, BorderLayout.SOUTH);
 
         return panel;
     }
     
+
     private JLabel createTitleLabel(String text, Color color) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setForeground(color.brighter());

@@ -18,8 +18,7 @@ public class Main {
         users.put("clienteA", "passA");
         users.put("clienteB", "passB"); 
 
-        // Inicializar empleados (aproximadamente 100, distribuidos en departamentos)
-        // Coaches/Instructores (10 principales de clases + extras para mínimo 10 coaches)
+        
         Empleado coach1 = new Empleado("E001", "Ana García", "Coach");
         Empleado coach2 = new Empleado("E002", "Sofía Cruz", "Coach");
         Empleado coach3 = new Empleado("E003", "Luis Pérez", "Coach");
@@ -36,7 +35,6 @@ public class Main {
         Empleado coach14 = new Empleado("E014", "Andrés Castro", "Coach"); 
         Empleado coach15 = new Empleado("E015", "Isabel Pérez", "Coach"); 
 
-        // Ventas (15 empleados)
         Empleado ventas1 = new Empleado("E016", "Diego Vargas", "Ventas");
         Empleado ventas2 = new Empleado("E017", "Elena Ruiz", "Ventas");
         Empleado ventas3 = new Empleado("E018", "Francisco Ortega", "Ventas");
@@ -53,7 +51,6 @@ public class Main {
         Empleado ventas14 = new Empleado("E029", "Quintana Pérez", "Ventas");
         Empleado ventas15 = new Empleado("E030", "Raúl Vargas", "Ventas");
 
-        // Marketing (15 empleados)
         Empleado marketing1 = new Empleado("E031", "Sara Ruiz", "Marketing");
         Empleado marketing2 = new Empleado("E032", "Tomás Ortega", "Marketing");
         Empleado marketing3 = new Empleado("E033", "Ursula Soto", "Marketing");
@@ -70,7 +67,6 @@ public class Main {
         Empleado marketing14 = new Empleado("E044", "Felipe Vargas", "Marketing");
         Empleado marketing15 = new Empleado("E045", "Gloria Ruiz", "Marketing");
 
-        // Limpieza (10 empleados)
         Empleado limpieza1 = new Empleado("E046", "Héctor Ortega", "Limpieza");
         Empleado limpieza2 = new Empleado("E047", "Inés Soto", "Limpieza");
         Empleado limpieza3 = new Empleado("E048", "Jorge Mendoza", "Limpieza");
