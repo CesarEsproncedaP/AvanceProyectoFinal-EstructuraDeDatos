@@ -128,9 +128,13 @@ public class ClasesProgramadasFrame extends JFrame {
         JButton myClassesButton = createStyledButton("Mis Clases Programadas", new Color(70, 130, 180), new Color(50, 100, 150));
         myClassesButton.addActionListener(e -> mostrarClasesProgramadas());
         
+        JButton executeNextButton = createStyledButton("Ejecutar Siguiente Clase", new Color(138, 43, 226), new Color(100, 30, 180));
+        executeNextButton.addActionListener(e -> ejecutarSiguienteClase());
+        
         buttonPanel.add(selectButton);
         buttonPanel.add(programButton);
         buttonPanel.add(myClassesButton);
+        buttonPanel.add(executeNextButton);
         
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         add(mainPanel);
@@ -180,6 +184,31 @@ public class ClasesProgramadasFrame extends JFrame {
         
         dialog.add(scrollPane, BorderLayout.CENTER);
         dialog.setVisible(true);
+    }
+    
+    private void ejecutarSiguienteClase() {
+        if (!"admin".equalsIgnoreCase(Main.currentUser)) {
+            JOptionPane.showMessageDialog(this, "Acceso denegado. Solo el usuario 'admin' puede ejecutar clases.", "Permiso Requerido", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (clasesDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay clases disponibles para ejecutar.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        // La lista ya está ordenada, la primera es la siguiente
+        Clase claseAEjecutar = clasesDisponibles.remove(0);
+        Main.removeClaseProgramadaForAll(claseAEjecutar);
+        
+        JOptionPane.showMessageDialog(this, "Clase ejecutada con éxito: " + claseAEjecutar.getNombre() + " (" + claseAEjecutar.getHorario() + ")", "Clase Ejecutada", JOptionPane.INFORMATION_MESSAGE);
+        
+        // Recargar la tabla
+        tableModel.setRowCount(0);
+        for (int i = 0; i < clasesDisponibles.size(); i++) {
+            Clase c = clasesDisponibles.get(i);
+            tableModel.addRow(new Object[]{c.getInstructor(), c.getNombre(), c.getHorario()});
+        }
     }
 
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {

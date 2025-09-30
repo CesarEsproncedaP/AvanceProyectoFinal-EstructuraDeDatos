@@ -48,7 +48,7 @@ public class TareasUrgentesFrame extends JFrame {
         topPanel.add(backButtonPanel, BorderLayout.EAST);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Descripción", "Fecha Entrega", "Tiempo Estimado"}, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Descripción", "Fecha Entrega", "Tiempo Estimado (Horas)"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
