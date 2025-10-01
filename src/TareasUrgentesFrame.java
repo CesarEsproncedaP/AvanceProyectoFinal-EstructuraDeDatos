@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Queue;
 import java.text.*;
 
+// Clase para la ventana de gestión de tareas urgentes
 public class TareasUrgentesFrame extends JFrame {
-    private JTable tareasTable;
-    private DefaultTableModel tableModel;
-    private PriorityQueue<TareaPrioridad> colaTareas;
-    private JFrame previousFrame;
-    private static final Date CURRENT_DATE = new Date(); 
+    private JTable tareasTable; // Tabla para mostrar tareas
+    private DefaultTableModel tableModel; // Modelo de datos para la tabla
+    private PriorityQueue<TareaPrioridad> colaTareas; // Cola de tareas prioritarias
+    private JFrame previousFrame; // Referencia a la ventana anterior
+    private static final Date CURRENT_DATE = new Date(); // Fecha actual
     
     public TareasUrgentesFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;

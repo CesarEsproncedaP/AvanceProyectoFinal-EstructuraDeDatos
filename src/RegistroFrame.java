@@ -3,25 +3,30 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+// Clase para la ventana de registro de usuarios
 public class RegistroFrame extends JFrame {
-    private JFrame previousFrame;
+    private JFrame previousFrame; // Referencia a la ventana anterior
 
+    // Constructor de la ventana
     public RegistroFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Registro de Usuario - GYM MASTER");
         setSize(400, 400);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null); // Centra la ventana
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cierra solo esta ventana al salir
 
+        // Panel principal
         JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
         mainPanel.setBackground(new Color(20, 30, 48));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
+        // Título
         JLabel titleLabel = new JLabel("Registrar Nuevo Usuario", SwingConstants.CENTER);
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
+        // Panel para el formulario
         JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
         formPanel.setOpaque(false);
 
@@ -55,9 +60,11 @@ public class RegistroFrame extends JFrame {
         centerWrapper.add(formPanel);
         mainPanel.add(centerWrapper, BorderLayout.CENTER);
 
+        // Panel de botones
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setOpaque(false);
         
+        // Botón de registro
         JButton registerButton = createStyledButton("Registrar", new Color(74, 189, 172), new Color(47, 128, 114));
         registerButton.addActionListener(e -> {
             String name = nameField.getText().trim();
@@ -65,6 +72,7 @@ public class RegistroFrame extends JFrame {
             String pass = new String(passwordField.getPassword());
             String confirm = new String(confirmPasswordField.getPassword());
 
+            // Validaciones
             if (name.isEmpty() || user.isEmpty() || pass.isEmpty() || confirm.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Todos los campos son requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -80,6 +88,7 @@ public class RegistroFrame extends JFrame {
                 return;
             }
 
+            // Registrar usuario
             Main.users.put(user, pass);
             JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
             this.dispose();
@@ -88,6 +97,7 @@ public class RegistroFrame extends JFrame {
             }
         });
 
+        // Botón para volver
         JButton backButton = createStyledButton("Volver", new Color(255, 105, 180), new Color(200, 80, 140));
         backButton.addActionListener(e -> {
             this.dispose();
@@ -104,6 +114,7 @@ public class RegistroFrame extends JFrame {
         add(mainPanel);
     }
     
+    // Crea botones estilizados con efecto hover
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
         JButton button = new JButton(text) {
             private boolean hovered = false;

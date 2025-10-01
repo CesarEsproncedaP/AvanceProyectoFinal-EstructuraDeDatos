@@ -2,23 +2,27 @@ import javax.swing.SwingUtilities;
 import java.util.*;
 import java.text.*;
 
+// Clase principal para gestionar datos del gimnasio
 public class Main {
-    public static Map<String, String> users = new HashMap<>();
-    private static PriorityQueue<TareaPrioridad> colaTareas = new PriorityQueue<>();
-    private static ArbolBinarioEmpleados arbolEmpleados = new ArbolBinarioEmpleados();
-    private static Map<String, Empleado> hashEmpleados = new HashMap<>();
-    private static List<Maquina> listaMaquinas = new ArrayList<>();
-    private static List<Clase> clasesDisponibles = new ArrayList<>();
-    private static Map<String, List<Clase>> clasesProgramadasPorUsuario = new HashMap<>(); 
-    private static Map<String, TareaPrioridad> hashTareas = new HashMap<>(); 
-    public static String currentUser = null; // Usuario actual logueado
+    // Estructuras para almacenar datos
+    public static Map<String, String> users = new HashMap<>(); // Usuarios y contraseñas
+    private static PriorityQueue<TareaPrioridad> colaTareas = new PriorityQueue<>(); // Cola de tareas por prioridad
+    private static ArbolBinarioEmpleados arbolEmpleados = new ArbolBinarioEmpleados(); // Árbol de empleados
+    private static Map<String, Empleado> hashEmpleados = new HashMap<>(); // HashMap de empleados por ID
+    private static List<Maquina> listaMaquinas = new ArrayList<>(); // Lista de máquinas
+    private static List<Clase> clasesDisponibles = new ArrayList<>(); // Clases disponibles
+    private static Map<String, List<Clase>> clasesProgramadasPorUsuario = new HashMap<>(); // Clases programadas por usuario
+    private static Map<String, TareaPrioridad> hashTareas = new HashMap<>(); // HashMap de tareas por ID
+    public static String currentUser = null; // Usuario actualmente logueado
 
+    // Bloque estático para inicializar datos
     static {
+        // Usuarios predefinidos
         users.put("admin", "admin123");
         users.put("clienteA", "passA");
-        users.put("clienteB", "passB"); 
+        users.put("clienteB", "passB");
 
-        
+        // Crear empleados por categoría
         Empleado coach1 = new Empleado("E001", "Ana García", "Coach");
         Empleado coach2 = new Empleado("E002", "Sofía Cruz", "Coach");
         Empleado coach3 = new Empleado("E003", "Luis Pérez", "Coach");
@@ -29,11 +33,11 @@ public class Main {
         Empleado coach8 = new Empleado("E008", "Juan López", "Coach");
         Empleado coach9 = new Empleado("E009", "María González", "Coach");
         Empleado coach10 = new Empleado("E010", "Carlos Rivera", "Coach");
-        Empleado coach11 = new Empleado("E011", "Laura Flores", "Coach"); 
-        Empleado coach12 = new Empleado("E012", "Roberto Sánchez", "Coach"); 
-        Empleado coach13 = new Empleado("E013", "Sofía Mendoza", "Coach"); 
-        Empleado coach14 = new Empleado("E014", "Andrés Castro", "Coach"); 
-        Empleado coach15 = new Empleado("E015", "Isabel Pérez", "Coach"); 
+        Empleado coach11 = new Empleado("E011", "Laura Flores", "Coach");
+        Empleado coach12 = new Empleado("E012", "Roberto Sánchez", "Coach");
+        Empleado coach13 = new Empleado("E013", "Sofía Mendoza", "Coach");
+        Empleado coach14 = new Empleado("E014", "Andrés Castro", "Coach");
+        Empleado coach15 = new Empleado("E015", "Isabel Pérez", "Coach");
 
         Empleado ventas1 = new Empleado("E016", "Diego Vargas", "Ventas");
         Empleado ventas2 = new Empleado("E017", "Elena Ruiz", "Ventas");
@@ -78,7 +82,6 @@ public class Main {
         Empleado limpieza9 = new Empleado("E054", "Pedro Sánchez", "Limpieza");
         Empleado limpieza10 = new Empleado("E055", "Quinta Mendoza", "Limpieza");
 
-        // Mantenimiento (10 empleados)
         Empleado mantenimiento1 = new Empleado("E056", "Ramón Castro", "Mantenimiento");
         Empleado mantenimiento2 = new Empleado("E057", "Susana Pérez", "Mantenimiento");
         Empleado mantenimiento3 = new Empleado("E058", "Tomás Vargas", "Mantenimiento");
@@ -90,7 +93,6 @@ public class Main {
         Empleado mantenimiento9 = new Empleado("E064", "Zoe López", "Mantenimiento");
         Empleado mantenimiento10 = new Empleado("E065", "Alberto González", "Mantenimiento");
 
-        // Cajeros/Recepcionistas (10 empleados)
         Empleado cajero1 = new Empleado("E066", "Beatriz Rivera", "Cajero");
         Empleado cajero2 = new Empleado("E067", "Carlos Flores", "Cajero");
         Empleado cajero3 = new Empleado("E068", "Daniel Sánchez", "Cajero");
@@ -102,7 +104,6 @@ public class Main {
         Empleado cajero9 = new Empleado("E074", "Juan Ortega", "Cajero");
         Empleado cajero10 = new Empleado("E075", "Karla Soto", "Cajero");
 
-        // Operaciones (10 empleados)
         Empleado operaciones1 = new Empleado("E076", "Luis Mendoza", "Operaciones");
         Empleado operaciones2 = new Empleado("E077", "María Castro", "Operaciones");
         Empleado operaciones3 = new Empleado("E078", "Nicolás López", "Operaciones");
@@ -114,14 +115,12 @@ public class Main {
         Empleado operaciones9 = new Empleado("E084", "Tomás Castro", "Operaciones");
         Empleado operaciones10 = new Empleado("E085", "Ursula Pérez", "Operaciones");
 
-        // Recursos Humanos (5 empleados)
         Empleado rh1 = new Empleado("E086", "Víctor Vargas", "Recursos Humanos");
         Empleado rh2 = new Empleado("E087", "Wanda Ruiz", "Recursos Humanos");
         Empleado rh3 = new Empleado("E088", "Xavier Ortega", "Recursos Humanos");
         Empleado rh4 = new Empleado("E089", "Yolanda Soto", "Recursos Humanos");
         Empleado rh5 = new Empleado("E090", "Zacarias Mendoza", "Recursos Humanos");
 
-        // Finanzas (10 empleados)
         Empleado finanzas1 = new Empleado("E091", "Alicia Castro", "Finanzas");
         Empleado finanzas2 = new Empleado("E092", "Benito Pérez", "Finanzas");
         Empleado finanzas3 = new Empleado("E093", "Carmen Vargas", "Finanzas");
@@ -133,7 +132,7 @@ public class Main {
         Empleado finanzas9 = new Empleado("E099", "Inés Pérez", "Finanzas");
         Empleado finanzas10 = new Empleado("E100", "Jorge Vargas", "Finanzas");
 
-        // Insertar todos en el árbol
+        // Insertar empleados en el árbol
         arbolEmpleados.insertar(coach1);
         arbolEmpleados.insertar(coach2);
         arbolEmpleados.insertar(coach3);
@@ -235,7 +234,7 @@ public class Main {
         arbolEmpleados.insertar(finanzas9);
         arbolEmpleados.insertar(finanzas10);
 
-        // Insertar en hashMap
+        // Insertar empleados en HashMap
         hashEmpleados.put(coach1.getId(), coach1);
         hashEmpleados.put(coach2.getId(), coach2);
         hashEmpleados.put(coach3.getId(), coach3);
@@ -337,7 +336,7 @@ public class Main {
         hashEmpleados.put(finanzas9.getId(), finanzas9);
         hashEmpleados.put(finanzas10.getId(), finanzas10);
 
-        // Tareas con las descripciones originales, agregando fechas y tiempos de ejemplo
+        // Inicializar tareas con fechas y prioridades
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             TareaPrioridad tarea1 = new TareaPrioridad("T001", "Limpiar area de pesas", sdf.parse("2025-09-01"), 2);
@@ -356,6 +355,7 @@ public class Main {
             TareaPrioridad tarea14 = new TareaPrioridad("T014", "Revisar los aires acondicionados", sdf.parse("2025-09-14"), 3);
             TareaPrioridad tarea15 = new TareaPrioridad("T015", "Reemplazar los tapetes del piso", sdf.parse("2025-09-15"), 5);
 
+            // Agregar tareas a la cola y HashMap
             colaTareas.add(tarea1);
             colaTareas.add(tarea2);
             colaTareas.add(tarea3);
@@ -391,6 +391,7 @@ public class Main {
             e.printStackTrace();
         }
 
+        // Inicializar máquinas
         listaMaquinas.add(new Maquina("M001", "Cinta de correr", "Operativa"));
         listaMaquinas.add(new Maquina("M002", "Bicicleta de estática", "En reparación"));
         listaMaquinas.add(new Maquina("M003", "Máquina de remo", "Operativa"));
@@ -412,6 +413,7 @@ public class Main {
         listaMaquinas.add(new Maquina("M019", "Bicicleta de spinning", "Operativa"));
         listaMaquinas.add(new Maquina("M020", "Bicicleta de spinning", "Operativa"));
 
+        // Inicializar clases disponibles
         clasesDisponibles.add(new Clase("Yoga Avanzado", "Ana García", "Lunes 10:00 AM - 11:30 AM"));
         clasesDisponibles.add(new Clase("Zumba Fitness", "Sofía Cruz", "Lunes 12:00 PM - 1:30 PM"));
         clasesDisponibles.add(new Clase("Danza Aeróbica", "Sofía Cruz", "Lunes 6:00 PM - 7:30 PM"));
@@ -424,13 +426,14 @@ public class Main {
         clasesDisponibles.add(new Clase("Cross Training", "Ximena Cavazos", "Sábado 11:00 AM - 12:00 PM"));
     }
 
+    // Método principal para iniciar la aplicación
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                LoginFrame loginFrame = new LoginFrame(); 
+                LoginFrame loginFrame = new LoginFrame();
                 MainFrame mainFrame = new MainFrame(loginFrame);
-                RegistroFrame registroFrame = new RegistroFrame(loginFrame); 
-                loginFrame.setFrames(mainFrame, registroFrame); 
+                RegistroFrame registroFrame = new RegistroFrame(loginFrame);
+                loginFrame.setFrames(mainFrame, registroFrame);
                 loginFrame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -439,6 +442,7 @@ public class Main {
         });
     }
 
+    // Métodos para acceder a datos
     public static PriorityQueue<TareaPrioridad> getColaTareas() { return colaTareas; }
     public static ArbolBinarioEmpleados getArbolEmpleados() { return arbolEmpleados; }
     public static Map<String, Empleado> getHashEmpleados() { return hashEmpleados; }
@@ -446,38 +450,43 @@ public class Main {
     public static List<Clase> getClasesDisponibles() { return clasesDisponibles; }
     public static Map<String, TareaPrioridad> getHashTareas() { return hashTareas; }
 
-    public static List<Clase> getClasesProgramadasUsuario() { 
+    // Obtener clases programadas del usuario actual
+    public static List<Clase> getClasesProgramadasUsuario() {
         if (currentUser == null) {
-            return new ArrayList<>(); 
+            return new ArrayList<>();
         }
-        return clasesProgramadasPorUsuario.getOrDefault(currentUser, new ArrayList<>()); 
+        return clasesProgramadasPorUsuario.getOrDefault(currentUser, new ArrayList<>());
     }
 
-    public static void addClaseProgramada(Clase clase) { 
-        if (currentUser == null) return; 
-
+    // Agregar clase programada para el usuario actual
+    public static void addClaseProgramada(Clase clase) {
+        if (currentUser == null) return;
         List<Clase> listaUsuario = clasesProgramadasPorUsuario.computeIfAbsent(currentUser, k -> new ArrayList<>());
         if (!listaUsuario.contains(clase)) {
             listaUsuario.add(clase);
         }
     }
 
+    // Eliminar clase programada para todos los usuarios
     public static void removeClaseProgramadaForAll(Clase clase) {
         for (List<Clase> userClasses : clasesProgramadasPorUsuario.values()) {
             userClasses.remove(clase);
         }
     }
 
+    // Ordenar tareas por fecha de entrega
     public static List<TareaPrioridad> ordenarTareasPorPrioridadYFecha(List<TareaPrioridad> tareas) {
         List<TareaPrioridad> sorted = new ArrayList<>(tareas);
         Collections.sort(sorted, Comparator.comparing(TareaPrioridad::getFechaEntrega));
         return sorted;
     }
 
+    // Buscar tarea por ID
     public static TareaPrioridad buscarTareaPorId(String id) {
         return hashTareas.get(id);
     }
 
+    // Calcular tiempo total de tareas recursivamente
     public static int calcularTiempoTotalRecursivo(List<TareaPrioridad> tareas, int index) {
         if (index >= tareas.size()) {
             return 0;

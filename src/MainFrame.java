@@ -3,22 +3,26 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+// Clase para la ventana principal del sistema de gestión del gimnasio
 public class MainFrame extends JFrame {
 
     private JFrame loginFrame;
-    private JLabel userLabel;  
+    private JLabel userLabel; // Etiqueta para mostrar el usuario actual
 
+    // Constructor de la ventana
     public MainFrame(JFrame loginFrame) {
         this.loginFrame = loginFrame;
         setTitle("Sistema de Gestión de Gimnasio - 67GYM");
         setSize(850, 600);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Centra la ventana
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la aplicación al salir
 
+        // Panel principal
         JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
         mainPanel.setBackground(new Color(20, 30, 48));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
+        // Panel superior con título y usuario
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
@@ -29,15 +33,17 @@ public class MainFrame extends JFrame {
 
         String userName = Main.currentUser != null ? Main.currentUser.substring(0, 1).toUpperCase() + Main.currentUser.substring(1) : "Invitado";
         userLabel = new JLabel("Usuario Actual: " + userName, SwingConstants.RIGHT);
-        userLabel.setForeground(new Color(255, 204, 0)); 
-        userLabel.setFont(new Font("Arial", Font.BOLD, 16)); 
+        userLabel.setForeground(new Color(255, 204, 0));
+        userLabel.setFont(new Font("Arial", Font.BOLD, 16));
         topPanel.add(userLabel, BorderLayout.NORTH);
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
+        // Panel de botones en cuadrícula
         JPanel buttonGridPanel = new JPanel(new GridLayout(2, 2, 20, 20));
         buttonGridPanel.setOpaque(false);
 
+        // Botón para tareas urgentes (solo admin)
         JButton tareasButton = createStyledButton("Tareas Urgentes", new Color(74, 189, 172));
         tareasButton.addActionListener(e -> {
             if ("admin".equalsIgnoreCase(Main.currentUser)) {
@@ -49,6 +55,7 @@ public class MainFrame extends JFrame {
             }
         });
 
+        // Botón para clases programadas
         JButton clasesButton = createStyledButton("Clases Programadas", new Color(255, 105, 180));
         clasesButton.addActionListener(e -> {
             ClasesProgramadasFrame clasesFrame = new ClasesProgramadasFrame(this);
@@ -56,6 +63,7 @@ public class MainFrame extends JFrame {
             this.setVisible(false);
         });
 
+        // Botón para inventario de máquinas
         JButton inventarioButton = createStyledButton("Inventario de Máquinas", new Color(47, 128, 237));
         inventarioButton.addActionListener(e -> {
             InventarioMaquinasFrame inventarioFrame = new InventarioMaquinasFrame(this);
@@ -63,6 +71,7 @@ public class MainFrame extends JFrame {
             this.setVisible(false);
         });
 
+        // Botón para gestión avanzada
         JButton gestionButton = createStyledButton("Gestión Avanzada", new Color(255, 193, 7));
         gestionButton.addActionListener(e -> {
             GestionAvanzadaFrame gestionFrame = new GestionAvanzadaFrame(this);
@@ -77,6 +86,7 @@ public class MainFrame extends JFrame {
         
         mainPanel.add(buttonGridPanel, BorderLayout.CENTER);
 
+        // Panel inferior con botones de volver y salir
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         bottomPanel.setOpaque(false);
         
@@ -99,11 +109,13 @@ public class MainFrame extends JFrame {
         add(mainPanel);
     }
 
+    // Actualiza la etiqueta del usuario
     public void updateUserLabel() {
         String userName = Main.currentUser != null ? Main.currentUser.substring(0, 1).toUpperCase() + Main.currentUser.substring(1) : "Invitado";
         userLabel.setText("Usuario Actual: " + userName);
     }
 
+    // Crea botones estilizados con efecto hover
     private JButton createStyledButton(String text, Color baseColor) {
         JButton button = new JButton(text) {
             private boolean hovered = false;
@@ -115,7 +127,7 @@ public class MainFrame extends JFrame {
                 int h = getHeight();
                 Color c1 = hovered ? baseColor.brighter() : baseColor;
                 Color c2 = hovered ? baseColor.darker() : baseColor.darker();
-                GradientPaint gp = new GradientPaint(0, 0, c1, w, h, c2); 
+                GradientPaint gp = new GradientPaint(0, 0, c1, w, h, c2);
                 g2.setPaint(gp);
                 g2.fillRect(0, 0, w, h);
                 g2.dispose();

@@ -3,28 +3,32 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+// Clase para la ventana de inicio de sesión
 public class LoginFrame extends JFrame {
     private JTextField userField;
     private JPasswordField passwordField;
-
     private MainFrame mainFrame;
     private RegistroFrame registroFrame;
 
+    // Constructor de la ventana
     public LoginFrame() {
-        setTitle("Iniciar Sesión - 67GYM"); 
+        setTitle("Iniciar Sesión - 67GYM");
         setSize(400, 300);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Centra la ventana
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la aplicación al salir
 
+        // Panel principal
         JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
         mainPanel.setBackground(new Color(20, 30, 48));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
+        // Título
         JLabel titleLabel = new JLabel("Bienvenido a 67GYM", SwingConstants.CENTER);
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
+        // Panel para campos de usuario y contraseña
         JPanel formPanel = new JPanel(new GridLayout(2, 2, 10, 10));
         formPanel.setOpaque(false);
 
@@ -48,12 +52,15 @@ public class LoginFrame extends JFrame {
         centerWrapper.add(formPanel);
         mainPanel.add(centerWrapper, BorderLayout.CENTER);
 
+        // Panel de botones
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setOpaque(false);
         
+        // Botón de inicio de sesión
         JButton loginButton = createStyledButton("Iniciar Sesión", new Color(74, 189, 172), new Color(47, 128, 114));
         loginButton.addActionListener(e -> attemptLogin());
         
+        // Botón de registro
         JButton registerButton = createStyledButton("Registrarse", new Color(255, 105, 180), new Color(200, 80, 140));
         registerButton.addActionListener(e -> {
             this.setVisible(false);
@@ -70,11 +77,13 @@ public class LoginFrame extends JFrame {
         add(mainPanel);
     }
     
+    // Asigna referencias a otras ventanas
     public void setFrames(MainFrame mainFrame, RegistroFrame registroFrame) {
         this.mainFrame = mainFrame;
         this.registroFrame = registroFrame;
     }
 
+    // Intenta iniciar sesión
     private void attemptLogin() {
         String user = userField.getText().trim();
         String password = new String(passwordField.getPassword());
@@ -110,6 +119,7 @@ public class LoginFrame extends JFrame {
         }
     }
     
+    // Crea botones con estilo y efecto hover
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
         JButton button = new JButton(text) {
             private boolean hovered = false;

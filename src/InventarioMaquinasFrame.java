@@ -12,6 +12,7 @@ public class InventarioMaquinasFrame extends JFrame {
     private JFrame previousFrame;
     private String currentFilter = "Todas";
 
+    // Constructor de la ventana
     public InventarioMaquinasFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Inventario de Máquinas - GYM MASTER");
@@ -19,10 +20,12 @@ public class InventarioMaquinasFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        // Panel principal
         JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
         mainPanel.setBackground(new Color(26, 26, 26));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
+        // Título
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
         JLabel titleLabel = new JLabel("Inventario de Máquinas", SwingConstants.CENTER);
@@ -30,6 +33,7 @@ public class InventarioMaquinasFrame extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
         topPanel.add(titleLabel, BorderLayout.CENTER);
 
+        // Botón volver
         JButton backButton = createStyledButton("Volver", new Color(255, 204, 0), new Color(200, 150, 0));
         backButton.addActionListener(e -> {
             this.dispose();
@@ -43,6 +47,7 @@ public class InventarioMaquinasFrame extends JFrame {
         topPanel.add(backButtonPanel, BorderLayout.EAST);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
+        // Configuración de la tabla
         tableModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Estado"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -62,6 +67,7 @@ public class InventarioMaquinasFrame extends JFrame {
         scrollPane.getViewport().setBackground(new Color(40, 40, 40));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
+        // Panel de botones de filtro
         JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         bottomButtonPanel.setOpaque(false);
 
@@ -83,9 +89,9 @@ public class InventarioMaquinasFrame extends JFrame {
             refreshTable();
         });
 
+        // Botón para cambiar estado (solo admin)
         JButton changeStateButton = createStyledButton("Cambiar Estado", new Color(138, 43, 226), new Color(100, 30, 180));
         changeStateButton.addActionListener(e -> {
-            
             if (!"admin".equalsIgnoreCase(Main.currentUser)) {
                 JOptionPane.showMessageDialog(this, 
                                               "Acceso denegado. Solo el usuario 'admin' tiene permiso para cambiar el estado de las máquinas.", 
@@ -93,7 +99,6 @@ public class InventarioMaquinasFrame extends JFrame {
                                               JOptionPane.ERROR_MESSAGE);
                 return; 
             }
-
             CambiarEstadoDialog dialog = new CambiarEstadoDialog(this, Main.getListaMaquinas());
             dialog.setVisible(true); 
             if (dialog.isStateChanged()) { 
@@ -112,6 +117,7 @@ public class InventarioMaquinasFrame extends JFrame {
         refreshTable();
     }
 
+    // Actualiza la tabla al mostrar la ventana
     @Override
     public void setVisible(boolean b) {
         if (b) {
@@ -121,9 +127,9 @@ public class InventarioMaquinasFrame extends JFrame {
         super.setVisible(b);
     }
     
+    // Refresca la tabla con datos filtrados
     public void refreshTable() {
         List<Maquina> maquinasActuales = Main.getListaMaquinas();
-        
         tableModel.setRowCount(0);
         List<Maquina> maquinasFiltradas = maquinasActuales.stream()
             .filter(m -> currentFilter.equals("Todas") || m.getEstado().equals(currentFilter))
@@ -134,11 +140,13 @@ public class InventarioMaquinasFrame extends JFrame {
         }
     }
 
+    // Resetea el filtro y refresca la tabla
     public void refreshAndResetFilter() {
         this.currentFilter = "Todas";
         refreshTable();
     }
 
+    // Renderiza celdas de la tabla según el estado
     class EstadoTableCellRenderer extends JLabel implements TableCellRenderer {
         public EstadoTableCellRenderer() {
             setOpaque(true);
@@ -165,6 +173,7 @@ public class InventarioMaquinasFrame extends JFrame {
         }
     }
 
+    // Crea botones estilizados
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
         JButton button = new JButton(text);
         button.setForeground(Color.WHITE);
