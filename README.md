@@ -1,119 +1,109 @@
-# Gestión de Gimnasio
+# 🚀 Gestión de Gimnasio Avanzada: Estructuras y Algoritmos
 
-¡Bienvenido al proyecto **Gestión de Gimnasio**! Este es un sistema desarrollado en Java para gestionar las operaciones de un gimnasio, incluyendo tareas urgentes de mantenimiento (usando una pila), clases programadas (usando una cola) e inventario de máquinas (usando una lista). El programa permite agregar, completar y visualizar tareas, programar y cancelar clases, y administrar el estado de las máquinas del gimnasio.
+¡Bienvenido al proyecto **Gestión de Gimnasio Avanzada**! Este es un sistema desarrollado en Java que implementa **estructuras de datos complejas y algoritmos de optimización** para una gestión eficiente de recursos, clases y mantenimiento.
 
-## Tabla de Contenidos
-- [Descripción](#descripción)
-- [Características](#características)
-- [Requisitos](#requisitos)
-- [Instalación](#instalación)
-- [Cómo Ejecutar](#cómo-ejecutar)
-- [Uso](#uso)
-- [Estructura del Proyecto](#estructura-del-proyecto)
+## 📋 Tabla de Contenidos
+- [Descripción](#-descripción)
+- [Características Clave](#-características-clave)
+- [Fundamentos Algorítmicos](#-fundamentos-algorítmicos)
+- [Interfaz Gráfica (GUI)](#-interfaz-gráfica-gui---módulos-de-operación)
+- [Requisitos](#-requisitos)
+- [Instalación y Ejecución](#-instalación-y-ejecución)
+- [Uso](#-uso)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
 
-## Descripción
-El sistema **Gestión de Gimnasio** es una codigo escrito en Java que utiliza estructuras de datos para organizar las operaciones diarias de un gimnasio. Incluye:
-- **Pila** para tareas urgentes de mantenimiento (por ejemplo, reparar máquinas).
-- **Cola** para gestionar clases programadas con horarios e instructores.
-- **Lista** para el inventario de máquinas, con seguimiento de su estado (funcionando o averiadas).
+---
 
-## Características
-- **Gestión de tareas urgentes**: Agrega, completa y consulta tareas de mantenimiento usando una pila (`Stack`).
-- *Programación de clases*: Visualiza, inicia, cancela o agrega clases programadas usando una cola (`LinkedList` como `Queue`).
-- **Inventario de máquinas**: Administra máquinas, marcándolas como averiadas o reparadas, usando una lista (`LinkedList`).
-- **Interfaz de consola interactiva**: Menús claros para interactuar con el sistema.
-- **Datos predefinidos**: Incluye instructores, clases y máquinas inicializadas para pruebas rápidas.
+## ✨ Descripción
+El sistema es una aplicación con **Interfaz Gráfica (GUI)** construida en Java. Su objetivo es resolver problemas de **velocidad ($O(1)$) y planificación óptima** ($O(n \log n)$) en la gestión de un gimnasio. Integra módulos para la administración de personal, la información de **Clases Programadas** y la planificación estratégica de tareas de mantenimiento, incluyendo la gestión de **Máquinas en Reparación**.
 
-## Requisitos
-Para ejecutar este proyecto, necesitas lo siguiente:
+---
 
-| Requisito  | Versión      | Instalación                                                                 |
-|------------|--------------|-----------------------------------------------------------------------------|
-| Java (JDK) | 8 o superior | [Descarga Java](https://www.oracle.com/java/technologies/javase-downloads.html) o `sudo apt install openjdk-11-jdk` (Linux) |
-| Git        | Latest       | [Descarga Git](https://git-scm.com/downloads) o `sudo apt install git` (Linux) |
+## 🔑 Características Clave
+* **Interfaz Gráfica (GUI):** Operación intuitiva mediante pestañas organizadas por módulos.
+* **Velocidad Superior:** Acceso instantáneo a datos críticos usando **Tablas Hash**.
+* **Gestión Estratégica de Mantenimiento:** Uso de **Cola de Prioridad** para Máquinas en Reparación y **Merge Sort** para optimizar la asignación de tareas.
+* **Escalabilidad:** Implementación de estructuras con baja complejidad algorítmica (ej., $O(\log n)$) para soportar el crecimiento del negocio.
 
-- No se requieren dependencias externas, ya que el proyecto usa la biblioteca estándar de Java (`java.util`).
+---
 
-## Instalación
-Sigue estos pasos para configurar el proyecto en tu máquina:
+## ⚙️ Fundamentos Algorítmicos
 
-1. **Clona el repositorio**:
-   ```bash
-   git clone https://github.com/tu-usuario/gestion-gimnasio.git
-   
-2. **Navega al directorio del proyecto**:
-   ```bash
-   cd gestion-gimnasio
+La clave del proyecto es la aplicación estratégica de las siguientes estructuras y métodos, garantizando la eficiencia en cada módulo:
 
--Verifica que tienes Java instalado:bash
+| Módulo/Función | Estructura/Algoritmo | Complejidad | Propósito Principal |
+| :--- | :--- | :--- | :--- |
+| **Clases / Búsqueda** | **Tabla Hash** (`HashMap`) | $O(1)$ | Acceso instantáneo a **Clases Programadas**. |
+| **Personal / Organización** | **Árbol Binario (BST)** | $O(\log n)$ | Almacenar y listar empleados en orden alfabético. |
+| **Tareas / Urgencia** | **Cola de Prioridad** (`PriorityQueue`) | $O(\log n)$ | Priorizar **Máquinas en Reparación** (lo más crítico va primero). |
+| **Tareas / Optimización** | **Merge Sort** | $O(n \log n)$ | Implementación **Divide y Vencerás** para ordenar tareas por duración. |
+| **Tareas / Carga Total** | **Función Recursiva** | $O(N)$ | Cálculo instantáneo de las horas totales de trabajo pendientes. |
 
-3. **Verifica que tienes Java instalado**:
-   ```bash
-   java -version
--Si no está instalado, sigue las instrucciones de instalación de Java según tu sistema operativo.
+---
 
-## Cómo Ejecutar
+## 🖼️ Interfaz Gráfica (GUI) - Módulos de Operación
+
+La aplicación se presenta como un `JFrame` organizado en pestañas (`JTabbedPane`), donde cada módulo refleja la implementación de una estructura de datos clave para resolver una necesidad operativa específica del gimnasio:
+
+| Pestaña (Módulo) | Estructura de Datos | Función en la Gestión del Gimnasio |
+| :--- | :--- | :--- |
+| **Personal** | **Árbol Binario (BST)** | Gestión y listado ordenado de empleados ($\boldsymbol{O(\log n)}$). |
+| **Clases/Búsqueda** | **Tabla Hash** | Búsqueda y acceso **instantáneo** ($\boldsymbol{O(1)}$) a horarios, instructores y capacidad de **Clases Programadas**. |
+| **Tareas (Prioridad)** | **Cola de Prioridad** | Sistema de tickets de mantenimiento que prioriza automáticamente las **Máquinas en Reparación** más críticas. |
+| **Planificación/Optimización** | **Merge Sort / Recursividad** | Herramientas para el manager: permite ordenar tareas por duración (Merge Sort) y calcular el total de la carga de trabajo (Recursividad). |
+
+---
+
+## ✅ Requisitos
+Para compilar y ejecutar este proyecto, necesitas lo siguiente:
+
+* **Java Development Kit (JDK) 8 o superior.**
+* Un Entorno de Desarrollo (IDE) como **NetBeans** o **IntelliJ IDEA** (recomendado para trabajar con la GUI).
+
+---
+
+## 🛠️ Instalación y Ejecución
+
+Sigue estos pasos para configurar y ejecutar el proyecto:
+
+1.  **Clona el repositorio** en tu máquina local:
+    ```bash
+    git clone [https://github.com/tu-usuario/gestion-gimnasio-avanzada.git](https://github.com/tu-usuario/gestion-gimnasio-avanzada.git)
+    ```
+
+2.  **Navega al directorio del proyecto**:
+    ```bash
+    cd gestion-gimnasio-avanzada
+    ```
+
+3.  **Ejecuta desde tu IDE**:
+    * Abre la carpeta del proyecto en NetBeans o IntelliJ IDEA.
+    * Ejecuta la clase principal (`Main.java` o el Frame principal).
+
+---
+
+## 🖥️ Uso
+La aplicación opera de forma sencilla siguiendo la lógica de los módulos de la GUI, permitiendo al usuario interactuar con la gestión del gimnasio en tres áreas clave: Personal, Clases y Mantenimiento.
+
+---
+
+## 📁 Estructura del Proyecto
+El código está organizado de manera modular, separando la lógica de las estructuras de la interfaz, como se muestra a continuación:
+
 ```bash
-javac *.java
-java Main
-```
-
-💡 Consejo: Asegúrate de estar en el directorio que contiene los archivos `.java` al compilar y ejecutar.
-
-## Uso
-Una vez que ejecutes el programa, aparecerá un menú interactivo en la consola con las siguientes opciones:
-
-### Tareas de Mantenimiento Urgente (Pila)
-- Agrega tareas urgentes (por ejemplo, reparar una máquina).
-- Completa la tarea más reciente.
-- Consulta la próxima tarea sin eliminarla.
-
-### Clases Programadas (Cola)
-- Visualiza la próxima clase.
-- Inicia (y finaliza) la próxima clase.
-- Lista todas las clases programadas.
-- Cancela una clase por nombre.
-- Agrega una nueva clase seleccionando instructor y horario.
-
-### Inventario de Máquinas (Lista)
-- Lista todas las máquinas y su estado.
-- Marca una máquina como averiada (genera una tarea urgente).
-- Marca una máquina como reparada.
-
-### Otras opciones
-- **Ver estado completo**: Muestra el estado de tareas, clases y máquinas.
-- **Salir**: Cierra el programa.
-
-### Ejemplo de interacción
-```
---- SISTEMA DE GESTIÓN DE TAREAS GYM ---
-1. Tareas de Mantenimiento Urgente (Pila)
-2. Clases Programadas (Cola)
-3. Inventario de Máquinas (Lista)
-4. Ver estado de todas las tareas y equipos
-5. Salir
-Seleccione una opción: 2
-
---- Clases Programadas (Cola) ---
-1. Ver próxima clase (front)
-2. Iniciar próxima clase (dequeue)
-3. Ver todas las clases programadas
-4. Cancelar una clase
-5. Agregar una clase programada
-6. Volver al menú principal
-Seleccione una opción: 1
-La próxima clase es: Zumba
-```
-
-## Estructura del Proyecto
-El proyecto está organizado de la siguiente manera:
-```
-gestion-gimnasio/
-├── Main.java             # Clase principal con el menú y lógica del programa
-├── ClaseProgramada.java  # Clase para gestionar clases programadas
-├── instructor.java       # Clase para representar instructores
-├── Maquina.java          # Clase para gestionar máquinas del gimnasio
-├── Tarea.java            # Clase para representar tareas urgentes
-└── README.md             # Este archivo
-```
+gestion-gimnasio-avanzada/
+├── src/
+│ ├── Main.java                 # Punto de entrada principal
+│ ├── GestionAvanzadaFrame.java # Clase principal de la Interfaz Gráfica (GUI)
+│ ├── Estructuras/
+│ │ ├── HashTableManager.java   # Lógica para Tablas Hash (Clases/Búsqueda)
+│ │ ├── ArbolBinarioManager.java# Lógica para Árboles Binarios (Personal)
+│ │ └── PriorityQueueManager.java# Lógica para Colas de Prioridad (Tareas/Urgencia)
+│ ├── Modelos/
+│ │ ├── Empleado.java           # Clase para representar la Entidad del Personal
+│ │ ├── Clase.java              # Clase para representar la Entidad de la Clase Programada
+│ │ └── TareaMantenimiento.java # Clase para representar la Entidad de la Tarea/Reparación
+│ └── Algoritmos/
+│ └── MergeSort.java          # Implementación del algoritmo Divide y Vencerás
+└── README.md                 # Este archivo (Documentación del proyecto)
 
