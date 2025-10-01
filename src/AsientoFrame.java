@@ -6,6 +6,7 @@ public class AsientoFrame extends JFrame {
     private JPanel asientosPanel;
     private JButton[] botonesAsiento;
 
+    // En este constructor se configura la ventana para seleccionar asientos y el botón de volver el cual solamente hace volver al frame anterior.
     public AsientoFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Seleccionar Asiento");
@@ -42,6 +43,7 @@ public class AsientoFrame extends JFrame {
         add(mainPanel);
     }
 
+    // Y en este método se crean los botones de los asientos en un ciclo, cada uno con un número para hacerlo más fácil de ver y elegir.
     private void crearAsientos() {
         for (int i = 0; i < 20; i++) {
             final int asientoNumero = i + 1;
@@ -59,6 +61,7 @@ public class AsientoFrame extends JFrame {
         }
     }
     
+    // Aquí creo un botón con los colores base
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
         JButton button = new JButton(text);
         button.setForeground(Color.WHITE);

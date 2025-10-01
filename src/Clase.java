@@ -7,6 +7,7 @@ public class Clase {
     private String horario;
     private String[][] mapaAsientos;
 
+    // En este constructor inicializo los atributos de la clase con los valores que recibo y se creó el mapa de asientos llamando a inicializarAsientos.
     public Clase(String nombre, String instructor, String horario) {
         this.nombre = nombre;
         this.instructor = instructor;
@@ -15,6 +16,7 @@ public class Clase {
         inicializarAsientos(); 
     }
 
+    // Este método  inicializa los asientos de manera aleatoria, ocupado algunos y otros disponibles, todo eso usando un random.
     private void inicializarAsientos() {
         Random rand = new Random();
         for (int i = 0; i < 5; i++) {
@@ -28,24 +30,29 @@ public class Clase {
         }
     }
 
+    // Aquí se reserva el asiento seleccionado por el usuario, verificando que la fila y columna estén dentro del rango, marcandolo como ocupado.
     public void reservarAsiento(int fila, int columna) {
         if (fila >= 0 && fila < 5 && columna >= 0 && columna < 5) {
             mapaAsientos[fila][columna] = "OCUPADO";
         }
     }
 
+    // Este getter devuelve el nombre de la clase.
     public String getNombre() {
         return nombre;
     }
 
+    // Este getter devuelve el instructor de la clase.
     public String getInstructor() {
         return instructor;
     }
 
+    // Este getter devuelve el horario de la clase.
     public String getHorario() {
         return horario;
     }
     
+    // Este getter devuelve el mapa de asientos completo.
     public String[][] getMapaAsientos() {
         return mapaAsientos;
     }

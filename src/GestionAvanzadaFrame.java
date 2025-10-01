@@ -9,7 +9,7 @@ import javax.swing.border.TitledBorder;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.SimpleDateFormat;
-import java.util.Comparator; // Importación necesaria para Collections.sort si se usa, aunque aquí se llama TaskOptimizer.mergeSort
+import java.util.Comparator; 
 
 public class GestionAvanzadaFrame extends JFrame {
     private ArbolBinarioEmpleados arbolEmpleados;
@@ -19,6 +19,7 @@ public class GestionAvanzadaFrame extends JFrame {
     private GradientPanel mainPanel; 
     private JFrame previousFrame;
     
+    // En este constructor se configura la ventana principal de gestión avanzada, inicialiando las estructuras.
     public GestionAvanzadaFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Gestión Avanzada del Gimnasio");
@@ -103,6 +104,7 @@ public class GestionAvanzadaFrame extends JFrame {
     
 
 
+    // Este método crea el panel para la sección de árboles binarios, con título, área de display y botones para mostrar y buscar.
     private JPanel createArbolPanel(Color bg, Color accent) {
         JPanel panel = new JPanel(new BorderLayout(20, 20)); 
         panel.setOpaque(false); 
@@ -162,6 +164,7 @@ public class GestionAvanzadaFrame extends JFrame {
         return panel;
     }
 
+    // Este método crea el panel para tablas hash, con título, área de display y botones para buscar por ID y mostrar todos.
     private JPanel createHashPanel(Color bg, Color accent) {
         JPanel panel = new JPanel(new BorderLayout(20, 20));
         panel.setOpaque(false); 
@@ -226,6 +229,7 @@ public class GestionAvanzadaFrame extends JFrame {
     
     
 
+    // Este método crea el panel para colas de prioridad, con título, raea de display y botones para calcular estadísticas y optimizar.
     private JPanel createColasPanel(Color bg, Color accent) {
         JPanel panel = new JPanel(new BorderLayout(20, 20));
         panel.setOpaque(false);
@@ -238,7 +242,7 @@ public class GestionAvanzadaFrame extends JFrame {
         displayArea.setEditable(false);
         displayArea.setBackground(new Color(30, 30, 30));
         displayArea.setForeground(new Color(200, 200, 200));
-        // Usamos Monospaced para asegurar la alineación de las columnas
+
         displayArea.setFont(new Font("Monospaced", Font.PLAIN, 15)); 
         
         displayArea.setBorder(BorderFactory.createTitledBorder(
@@ -252,7 +256,6 @@ public class GestionAvanzadaFrame extends JFrame {
         JPanel buttonGridPanel = new JPanel(new GridLayout(1, 2, 25, 0)); 
         buttonGridPanel.setOpaque(false);
 
-        // --- Botón 1: Calcular Estadísticas (Recursividad) ---
         JButton calcButton = createStyledButton("Calcular Estadísticas (Rec.)", accent, accent.darker());
         calcButton.addActionListener(e -> {
             PriorityQueue<TareaPrioridad> cola = Main.getColaTareas();
@@ -263,7 +266,6 @@ public class GestionAvanzadaFrame extends JFrame {
             List<TareaPrioridad> listaTareas = new ArrayList<>(cola);
             double totalTiempo = Main.calcularTiempoTotalRecursivo(listaTareas, 0); 
             
-            // FORMATO MEJORADO PARA LA RECURSIVIDAD
             displayArea.setText("ESTADÍSTICAS RECURSIVAS:\n");
             displayArea.append("--------------------------------------------------------\n");
             displayArea.append(String.format("Número de tareas restantes: %d\n", listaTareas.size()));
@@ -272,7 +274,6 @@ public class GestionAvanzadaFrame extends JFrame {
             displayArea.append("Presione 'Optimizar Distribución (D&V)' para ordenar.");
         });
         
-        // --- Botón 2: Optimización (Divide y Vencerás) ---
         JButton optimizeButton = createStyledButton("Optimizar Distribución (D&V)", accent, accent.darker());
         optimizeButton.addActionListener(e -> {
             PriorityQueue<TareaPrioridad> cola = Main.getColaTareas();
@@ -290,7 +291,7 @@ public class GestionAvanzadaFrame extends JFrame {
             displayArea.append("Tareas ordenadas por Tiempo Estimado (de menor a mayor).\n");
             displayArea.append("------------------------------------------------------------------------------------------------\n");
             
-            // ENCABEZADOS DE COLUMNA ALINEADOS
+            // ENCABEZADOS DE COLUMNA 
             displayArea.append(String.format("%-4s | %-40s | %-8s | %s\n", 
                                             "No.", "DESCRIPCIÓN", "TIEMPO", "FECHA LÍMITE"));
             displayArea.append("------------------------------------------------------------------------------------------------\n");
@@ -298,7 +299,6 @@ public class GestionAvanzadaFrame extends JFrame {
             for (int i = 0; i < tareasParaOptimizar.size(); i++) {
                 TareaPrioridad tarea = tareasParaOptimizar.get(i);
                 
-                // FORMATO MEJORADO PARA ALINEAR
                 displayArea.append(String.format("%-4s | %-40s | %-8d | %s\n", 
                                                 (i + 1) + ".",
                                                 tarea.getDescripcion(),        
@@ -315,7 +315,7 @@ public class GestionAvanzadaFrame extends JFrame {
         
         JPanel buttonWrapperPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         buttonWrapperPanel.setOpaque(false);
-        buttonWrapperPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0)); // Espacio superior
+        buttonWrapperPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0)); 
         buttonWrapperPanel.add(buttonGridPanel);
         
         panel.add(buttonWrapperPanel, BorderLayout.SOUTH);
@@ -324,6 +324,7 @@ public class GestionAvanzadaFrame extends JFrame {
     }
     
 
+    // Este método crea una etiqueta con título centrado y color para los paneles.
     private JLabel createTitleLabel(String text, Color color) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setForeground(color.brighter());
@@ -331,6 +332,7 @@ public class GestionAvanzadaFrame extends JFrame {
         return label;
     }
 
+    // Aquí se crea un botón con efecto hover usando mouse listener.
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
          JButton button = new JButton(text) {
             private boolean hovered = false;

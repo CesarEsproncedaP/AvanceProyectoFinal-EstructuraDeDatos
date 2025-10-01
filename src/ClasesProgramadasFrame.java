@@ -20,6 +20,7 @@ public class ClasesProgramadasFrame extends JFrame {
     private DefaultTableModel tableModel;
     private JFrame previousFrame;
 
+    // Este es el constructor donde se configura toda la ventana para mostrar las clases programadas.
     public ClasesProgramadasFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Horario de Clases - GYM MASTER");
@@ -77,7 +78,6 @@ public class ClasesProgramadasFrame extends JFrame {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mma").withLocale(Locale.ENGLISH);
             return LocalTime.parse(horaInicio.toUpperCase(), formatter);
         }));
-        // Fin de la lógica de ordenamiento
 
         String[] columnNames = {"Instructor", "Clase", "Horario"};
         Object[][] data = new Object[clasesDisponibles.size()][3];
@@ -140,6 +140,7 @@ public class ClasesProgramadasFrame extends JFrame {
         add(mainPanel);
     }
     
+    // Este método programa la clase seleccionada y se agrega a las programadas del usuario y muestra un mensaje.
     private void programarClase() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
@@ -153,6 +154,7 @@ public class ClasesProgramadasFrame extends JFrame {
         }
     }
     
+    // Aquí se muestran las clases programadas del usuario en una tabla.
     private void mostrarClasesProgramadas() {
         List<Clase> clasesProgramadas = Main.getClasesProgramadasUsuario();
         
@@ -186,6 +188,7 @@ public class ClasesProgramadasFrame extends JFrame {
         dialog.setVisible(true);
     }
     
+    // Este método ejecuta la siguiente clase solo si el admin presiona el botón, al igual la remueve de disponibles y de programadas de todos los usuarios.
     private void ejecutarSiguienteClase() {
         if (!"admin".equalsIgnoreCase(Main.currentUser)) {
             JOptionPane.showMessageDialog(this, "Acceso denegado. Solo el usuario 'admin' puede ejecutar clases.", "Permiso Requerido", JOptionPane.ERROR_MESSAGE);
@@ -197,13 +200,11 @@ public class ClasesProgramadasFrame extends JFrame {
             return;
         }
         
-        // La lista ya está ordenada, la primera es la siguiente
         Clase claseAEjecutar = clasesDisponibles.remove(0);
         Main.removeClaseProgramadaForAll(claseAEjecutar);
         
         JOptionPane.showMessageDialog(this, "Clase ejecutada con éxito: " + claseAEjecutar.getNombre() + " (" + claseAEjecutar.getHorario() + ")", "Clase Ejecutada", JOptionPane.INFORMATION_MESSAGE);
         
-        // Recargar la tabla
         tableModel.setRowCount(0);
         for (int i = 0; i < clasesDisponibles.size(); i++) {
             Clase c = clasesDisponibles.get(i);
@@ -211,6 +212,7 @@ public class ClasesProgramadasFrame extends JFrame {
         }
     }
 
+    // Creo un botón que cambia de color cuando se pasa el mouse por el, esto es solamente estetico, no afecta en el funcionamiento del cóigo.
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
         JButton button = new JButton(text) {
             private boolean hovered = false;

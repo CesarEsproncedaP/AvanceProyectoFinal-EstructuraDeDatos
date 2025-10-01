@@ -9,6 +9,7 @@ public class ClassSeatFrame extends JFrame {
     private final int ROWS = 5;
     private final int COLS = 5;
 
+    // En este constructor se configur la ventana para seleccionar asientos de una clase específica.
     public ClassSeatFrame(Clase clase) {
         this.clase = Objects.requireNonNull(clase); // Asegura que la clase no sea null
         setTitle("Seleccionar Asiento para: " + clase.getNombre());
@@ -16,11 +17,11 @@ public class ClassSeatFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel(new GridLayout(ROWS + 1, COLS, 10, 10)); // +1 para el título o botones
+        JPanel mainPanel = new JPanel(new GridLayout(ROWS + 1, COLS, 10, 10)); 
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         mainPanel.setBackground(new Color(20, 30, 48));
 
-        // 1. Título de la Clase
+        // Es para poner el título de la Clase
         JLabel titleLabel = new JLabel("Seleccionar Asiento: " + clase.getNombre(), SwingConstants.CENTER);
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
@@ -37,6 +38,7 @@ public class ClassSeatFrame extends JFrame {
 
         String[][] mapaAsientos = clase.getMapaAsientos();
 
+        // Aquí se crean los botones de losasientos en un loop para filas y columnas.
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 final int fila = i;
@@ -50,7 +52,7 @@ public class ClassSeatFrame extends JFrame {
                 asientoButton.setFocusPainted(false);
                 asientoButton.setBorder(BorderFactory.createLineBorder(new Color(255, 105, 180), 2));
 
-                // Obtener el estado del asiento
+                // Se obiene el estado del asiento
                 String status = mapaAsientos[fila][columna]; 
 
                 if ("OCUPADO".equals(status)) {
@@ -63,6 +65,7 @@ public class ClassSeatFrame extends JFrame {
                     asientoButton.setEnabled(true);
                 }
 
+                // Se agrega un listener al botón para reservar el asiento si es que está disponible y se cambia el color a rojo y se muestra un mensaje.
                 asientoButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {

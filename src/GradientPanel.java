@@ -5,11 +5,13 @@ class GradientPanel extends JPanel {
     private Color color1;
     private Color color2;
 
+    // En este constructor inicializa los dos colores para el dardient.
     public GradientPanel(Color color1, Color color2) {
         this.color1 = color1;
         this.color2 = color2;
     }
 
+    // Se sobre escribe el paintComponent para dibujar un gardiant vertical desde color1 a color2 en el panel.
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

@@ -11,10 +11,12 @@ public class HorarioClasesFrame extends JFrame {
     private static List<Clase> listaClases = new ArrayList<>();
     private JFrame previousFrame;
 
+    // Este constructor llama al otro con previousFrame null si no se pasa ninguno.
     public HorarioClasesFrame() {
         this(null);
     }
     
+    // En este constructor configura la ventana para mostrar el horario de clases, se agregan clases de ejemplo en caso de que la lista esté vacia .
     public HorarioClasesFrame(JFrame previousFrame) {
         this.previousFrame = previousFrame;
         setTitle("Horario de Clases - GYM MASTER");
@@ -91,6 +93,7 @@ public class HorarioClasesFrame extends JFrame {
         add(mainPanel);
     }
 
+    // Este método carga las clases en la tabla, limpiando las filas y agregando cada clase con sus datos.
     private void cargarClases() {
         tableModel.setRowCount(0);
         for (Clase clase : listaClases) {
@@ -98,6 +101,7 @@ public class HorarioClasesFrame extends JFrame {
         }
     }
     
+    // Aquí se crea un botón con color y hover.
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
         JButton button = new JButton(text);
         button.setForeground(Color.WHITE);
@@ -111,6 +115,7 @@ public class HorarioClasesFrame extends JFrame {
         return button;
     }
 
+    // Este getter estático devuelve la lista de clases.
     public static List<Clase> getListaClases() {
         return listaClases;
     }
@@ -125,6 +130,7 @@ class Clase {
     private int[] asientosReservados = new int[20]; // 20 asientos por defecto
     private int asientosOcupados = 0;
 
+    // Constructor para inicializar una clase con nombre, horario, día y sala.
     public Clase(String nombre, String horario, String dia, String sala) {
         this.nombre = nombre;
         this.horario = horario;
@@ -132,13 +138,20 @@ class Clase {
         this.sala = sala;
     }
 
+    // Getter para el nombre.
     public String getNombre() { return nombre; }
+    // Getter para el horario.
     public String getHorario() { return horario; }
+    // Getter para el día.
     public String getDia() { return dia; }
+    // Getter para la sala.
     public String getSala() { return sala; }
+    // Getter para los asientos reservados.
     public int[] getAsientosReservados() { return asientosReservados; }
+    // Getter para el número de asientos ocupados.
     public int getAsientosOcupados() { return asientosOcupados; }
 
+    // Setter para actualizar el número de asientos ocupados.
     public void setAsientosOcupados(int asientosOcupados) { this.asientosOcupados = asientosOcupados; }
 }
 
@@ -147,6 +160,7 @@ class AsientosFrame extends JFrame {
     private Clase clase;
     private JButton[] botonesAsiento;
 
+    // Constructor para la ventana de asientos, al igual se puede vlver a la ventana anterior.
     public AsientosFrame(JFrame previousFrame, Clase clase) {
         this.previousFrame = previousFrame;
         this.clase = clase;
