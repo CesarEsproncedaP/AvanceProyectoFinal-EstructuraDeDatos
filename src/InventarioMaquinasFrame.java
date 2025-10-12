@@ -1,0 +1,189 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class InventarioMaquinasFrame extends JFrame {
+    private JTable maquinasTable;
+    private DefaultTableModel tableModel;
+    private JFrame previousFrame;
+    private String currentFilter = "Todas";
+
+    // Constructor de la ventana
+    public InventarioMaquinasFrame(JFrame previousFrame) {
+        this.previousFrame = previousFrame;
+        setTitle("Inventario de Máquinas - GYM MASTER");
+        setSize(1000, 700);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        // Panel principal
+        JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
+        mainPanel.setBackground(new Color(26, 26, 26));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+        // Título
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+        JLabel titleLabel = new JLabel("Inventario de Máquinas", SwingConstants.CENTER);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        topPanel.add(titleLabel, BorderLayout.CENTER);
+
+        // Botón volver
+        JButton backButton = createStyledButton("Volver", new Color(255, 204, 0), new Color(200, 150, 0));
+        backButton.addActionListener(e -> {
+            this.dispose();
+            if (previousFrame != null) {
+                previousFrame.setVisible(true);
+            }
+        });
+        JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        backButtonPanel.setOpaque(false);
+        backButtonPanel.add(backButton);
+        topPanel.add(backButtonPanel, BorderLayout.EAST);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        // Configuración de la tabla
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Estado"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        maquinasTable = new JTable(tableModel);
+        maquinasTable.setRowHeight(25);
+        maquinasTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        maquinasTable.setBackground(new Color(40, 40, 40));
+        maquinasTable.setForeground(Color.WHITE);
+        maquinasTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+        maquinasTable.getTableHeader().setBackground(new Color(50, 50, 50));
+        maquinasTable.getTableHeader().setForeground(new Color(74, 189, 172));
+        maquinasTable.setDefaultRenderer(Object.class, new EstadoTableCellRenderer());
+        JScrollPane scrollPane = new JScrollPane(maquinasTable);
+        scrollPane.getViewport().setBackground(new Color(40, 40, 40));
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Panel de botones de filtro
+        JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        bottomButtonPanel.setOpaque(false);
+
+        JButton showAllButton = createStyledButton("Mostrar Todas", new Color(74, 189, 172), new Color(47, 128, 114));
+        showAllButton.addActionListener(e -> {
+            currentFilter = "Todas";
+            refreshTable();
+        });
+
+        JButton showOperativasButton = createStyledButton("Máquinas Operativas", new Color(47, 128, 237), new Color(30, 90, 180));
+        showOperativasButton.addActionListener(e -> {
+            currentFilter = "Operativa";
+            refreshTable();
+        });
+
+        JButton showReparacionButton = createStyledButton("En Reparación", new Color(255, 50, 50), new Color(180, 30, 30));
+        showReparacionButton.addActionListener(e -> {
+            currentFilter = "En reparación";
+            refreshTable();
+        });
+
+        // Botón para cambiar estado (solo admin)
+        JButton changeStateButton = createStyledButton("Cambiar Estado", new Color(138, 43, 226), new Color(100, 30, 180));
+        changeStateButton.addActionListener(e -> {
+            if (!"admin".equalsIgnoreCase(Main.currentUser)) {
+                JOptionPane.showMessageDialog(this, 
+                                              "Acceso denegado. Solo el usuario 'admin' tiene permiso para cambiar el estado de las máquinas.", 
+                                              "Permiso Requerido", 
+                                              JOptionPane.ERROR_MESSAGE);
+                return; 
+            }
+            CambiarEstadoDialog dialog = new CambiarEstadoDialog(this, Main.getListaMaquinas());
+            dialog.setVisible(true); 
+            if (dialog.isStateChanged()) { 
+                refreshAndResetFilter(); 
+            }
+        });
+
+        bottomButtonPanel.add(showAllButton);
+        bottomButtonPanel.add(showOperativasButton);
+        bottomButtonPanel.add(showReparacionButton);
+        bottomButtonPanel.add(changeStateButton);
+
+        mainPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
+        refreshTable();
+    }
+
+    // Actualiza la tabla al mostrar la ventana
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            currentFilter = "Todas";
+            refreshTable();
+        }
+        super.setVisible(b);
+    }
+    
+    // Refresca la tabla con datos filtrados
+    public void refreshTable() {
+        List<Maquina> maquinasActuales = Main.getListaMaquinas();
+        tableModel.setRowCount(0);
+        List<Maquina> maquinasFiltradas = maquinasActuales.stream()
+            .filter(m -> currentFilter.equals("Todas") || m.getEstado().equals(currentFilter))
+            .collect(Collectors.toList());
+
+        for (Maquina maquina : maquinasFiltradas) {
+            tableModel.addRow(new Object[]{maquina.getId(), maquina.getNombre(), maquina.getEstado()});
+        }
+    }
+
+    // Resetea el filtro y refresca la tabla
+    public void refreshAndResetFilter() {
+        this.currentFilter = "Todas";
+        refreshTable();
+    }
+
+    // Renderiza celdas de la tabla según el estado
+    class EstadoTableCellRenderer extends JLabel implements TableCellRenderer {
+        public EstadoTableCellRenderer() {
+            setOpaque(true);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Object estadoValue = table.getValueAt(row, 2);
+            if (estadoValue != null) {
+                String estado = estadoValue.toString();
+                if (estado.equals("En reparación")) {
+                    setBackground(new Color(255, 100, 100));
+                    setForeground(Color.BLACK);
+                } else if (estado.equals("Operativa")) {
+                    setBackground(new Color(144, 238, 144));
+                    setForeground(Color.BLACK);
+                } else {
+                    setBackground(table.getBackground());
+                    setForeground(table.getForeground());
+                }
+            }
+            setText(value.toString());
+            return this;
+        }
+    }
+
+    // Crea botones estilizados
+    private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
+        JButton button = new JButton(text);
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Arial", Font.BOLD, 18));
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setBackground(baseColor);
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        return button;
+    }
+}

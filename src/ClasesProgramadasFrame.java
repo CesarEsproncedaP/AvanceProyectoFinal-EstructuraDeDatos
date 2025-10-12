@@ -1,0 +1,250 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+public class ClasesProgramadasFrame extends JFrame {
+    
+    private List<Clase> clasesDisponibles; 
+    
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private JFrame previousFrame;
+
+    // Este es el constructor donde se configura toda la ventana para mostrar las clases programadas.
+    public ClasesProgramadasFrame(JFrame previousFrame) {
+        this.previousFrame = previousFrame;
+        setTitle("Horario de Clases - GYM MASTER");
+        setSize(850, 600);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        JPanel mainPanel = new JPanel(); 
+        mainPanel.setBackground(new Color(20, 30, 48)); 
+        
+        mainPanel.setLayout(new BorderLayout(20, 20));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+
+        JLabel titleLabel = new JLabel("Horario de Clases", SwingConstants.CENTER);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        topPanel.add(titleLabel, BorderLayout.CENTER);
+
+        JButton backButton = createStyledButton("Volver", new Color(255, 105, 180), new Color(200, 80, 140));
+        backButton.addActionListener(e -> {
+            this.dispose();
+            if (previousFrame != null) {
+                previousFrame.setVisible(true);
+            }
+        });
+        
+        JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        backButtonPanel.setOpaque(false);
+        backButtonPanel.add(backButton);
+        topPanel.add(backButtonPanel, BorderLayout.EAST);
+
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        clasesDisponibles = Main.getClasesDisponibles(); 
+
+        Map<String, Integer> dayOrder = new HashMap<>();
+        dayOrder.put("Lunes", 1);
+        dayOrder.put("Martes", 2);
+        dayOrder.put("Miércoles", 3);
+        dayOrder.put("Jueves", 4);
+        dayOrder.put("Viernes", 5);
+        dayOrder.put("Sábado", 6);
+        dayOrder.put("Domingo", 7);
+
+        clasesDisponibles.sort(Comparator.comparing((Clase c) -> {
+            String[] parts = c.getHorario().split(" ", 2);
+            return dayOrder.getOrDefault(parts[0], Integer.MAX_VALUE);
+        }).thenComparing((Clase c) -> {
+            String[] parts = c.getHorario().split(" ", 2);
+            if (parts.length < 2) return LocalTime.MAX;
+            String horaInicio = parts[1].split(" - ")[0].trim().replace(" ", "");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mma").withLocale(Locale.ENGLISH);
+            return LocalTime.parse(horaInicio.toUpperCase(), formatter);
+        }));
+
+        String[] columnNames = {"Instructor", "Clase", "Horario"};
+        Object[][] data = new Object[clasesDisponibles.size()][3];
+        for (int i = 0; i < clasesDisponibles.size(); i++) {
+            Clase c = clasesDisponibles.get(i);
+            data[i][0] = c.getInstructor();
+            data[i][1] = c.getNombre();
+            data[i][2] = c.getHorario();
+        }
+
+        tableModel = new DefaultTableModel(data, columnNames);
+        table = new JTable(tableModel);
+        table.setFillsViewportHeight(true);
+        table.setFont(new Font("Arial", Font.PLAIN, 16));
+        table.setBackground(new Color(30, 30, 30));
+        table.setForeground(Color.WHITE);
+        table.setGridColor(new Color(60, 60, 60));
+        table.getTableHeader().setBackground(new Color(50, 50, 50));
+        table.getTableHeader().setForeground(Color.WHITE);
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+        table.setSelectionBackground(new Color(74, 189, 172));
+        table.setSelectionForeground(Color.BLACK);
+        table.setRowHeight(30);
+
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.getViewport().setBackground(new Color(30, 30, 30));
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setOpaque(false);
+        
+        JButton selectButton = createStyledButton("Seleccionar Asiento", new Color(74, 189, 172), new Color(47, 128, 114));
+        selectButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                // Abre la ventana de asientos. El estado de la clase (asientos ocupados).
+                new ClassSeatFrame(clasesDisponibles.get(selectedRow)).setVisible(true); 
+            } else {
+                JOptionPane.showMessageDialog(this, "Por favor, selecciona una clase de la tabla.", "Selecciona una clase", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+        
+        JButton programButton = createStyledButton("Programar Clase", new Color(255, 204, 0), new Color(200, 150, 0));
+        programButton.addActionListener(e -> programarClase());
+        
+        JButton myClassesButton = createStyledButton("Mis Clases Programadas", new Color(70, 130, 180), new Color(50, 100, 150));
+        myClassesButton.addActionListener(e -> mostrarClasesProgramadas());
+        
+        JButton executeNextButton = createStyledButton("Ejecutar Siguiente Clase", new Color(138, 43, 226), new Color(100, 30, 180));
+        executeNextButton.addActionListener(e -> ejecutarSiguienteClase());
+        
+        buttonPanel.add(selectButton);
+        buttonPanel.add(programButton);
+        buttonPanel.add(myClassesButton);
+        buttonPanel.add(executeNextButton);
+        
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        add(mainPanel);
+    }
+    
+    // Este método programa la clase seleccionada y se agrega a las programadas del usuario y muestra un mensaje.
+    private void programarClase() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow >= 0) {
+            Clase claseAProgramar = clasesDisponibles.get(selectedRow);
+            
+            Main.addClaseProgramada(claseAProgramar); 
+            
+            JOptionPane.showMessageDialog(this, "Clase de " + claseAProgramar.getNombre() + " programada con éxito para el usuario actual.", "Clase Programada", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona una clase para programar.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    // Aquí se muestran las clases programadas del usuario en una tabla.
+    private void mostrarClasesProgramadas() {
+        List<Clase> clasesProgramadas = Main.getClasesProgramadasUsuario();
+        
+        if (clasesProgramadas.isEmpty()) { 
+            JOptionPane.showMessageDialog(this, "No has programado ninguna clase aún.", "Mis Clases", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JDialog dialog = new JDialog(this, "Mis Clases Programadas", true);
+        dialog.setSize(500, 300);
+        dialog.setLocationRelativeTo(this);
+
+        DefaultTableModel programadasTableModel = new DefaultTableModel(new Object[]{"Clase", "Instructor", "Horario"}, 0);
+        for (Clase clase : clasesProgramadas) {
+            programadasTableModel.addRow(new Object[]{clase.getNombre(), clase.getInstructor(), clase.getHorario()});
+        }
+        
+        JTable programadasTable = new JTable(programadasTableModel);
+        programadasTable.setRowHeight(25);
+        programadasTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        programadasTable.setBackground(new Color(40, 40, 40));
+        programadasTable.setForeground(Color.WHITE);
+        programadasTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+        programadasTable.getTableHeader().setBackground(new Color(50, 50, 50));
+        programadasTable.getTableHeader().setForeground(new Color(255, 105, 180));
+        
+        JScrollPane scrollPane = new JScrollPane(programadasTable);
+        scrollPane.getViewport().setBackground(new Color(40, 40, 40));
+        
+        dialog.add(scrollPane, BorderLayout.CENTER);
+        dialog.setVisible(true);
+    }
+    
+    // Este método ejecuta la siguiente clase solo si el admin presiona el botón, al igual la remueve de disponibles y de programadas de todos los usuarios.
+    private void ejecutarSiguienteClase() {
+        if (!"admin".equalsIgnoreCase(Main.currentUser)) {
+            JOptionPane.showMessageDialog(this, "Acceso denegado. Solo el usuario 'admin' puede ejecutar clases.", "Permiso Requerido", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (clasesDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay clases disponibles para ejecutar.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        Clase claseAEjecutar = clasesDisponibles.remove(0);
+        Main.removeClaseProgramadaForAll(claseAEjecutar);
+        
+        JOptionPane.showMessageDialog(this, "Clase ejecutada con éxito: " + claseAEjecutar.getNombre() + " (" + claseAEjecutar.getHorario() + ")", "Clase Ejecutada", JOptionPane.INFORMATION_MESSAGE);
+        
+        tableModel.setRowCount(0);
+        for (int i = 0; i < clasesDisponibles.size(); i++) {
+            Clase c = clasesDisponibles.get(i);
+            tableModel.addRow(new Object[]{c.getInstructor(), c.getNombre(), c.getHorario()});
+        }
+    }
+
+    // Creo un botón que cambia de color cuando se pasa el mouse por el, esto es solamente estetico, no afecta en el funcionamiento del cóigo.
+    private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
+        JButton button = new JButton(text) {
+            private boolean hovered = false;
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (hovered) {
+                    g.setColor(hoverColor);
+                } else {
+                    g.setColor(baseColor);
+                }
+                g.fillRect(0, 0, getWidth(), getHeight());
+                super.paintComponent(g);
+            }
+            @Override
+            public void updateUI() {
+                super.updateUI();
+                setOpaque(false);
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) { hovered = true; repaint(); }
+                    @Override
+                    public void mouseExited(MouseEvent e) { hovered = false; repaint(); }
+                });
+            }
+        };
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Arial", Font.BOLD, 18));
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
+    }
+}
